@@ -73,11 +73,9 @@ def doDownload(url_m3u8, ts_id):
 	except :
 		return
 
-def Start(args_1, args_2, args_3):
+def Start(args_1):
 	try:
 		global url #影片網址(input)
-		global file_path #: 下載後的影片要儲存的google drive位置(input)
-		global thread_num #多執行緒數量(input)
 		global video_id #:影片番號	
 		global file_name #: 影片儲存名稱
 		global url_m3u8 #: m3u8檔url
@@ -87,10 +85,6 @@ def Start(args_1, args_2, args_3):
 		global url_inits #: 開頭檔的url
 		#輸入要處理的影片網址
 		url = args_1
-		#下載的位置
-		file_path = args_2
-		#多執行緒數量
-		thread_num = args_3
 		#擷取url資訊
 		print("開始進行網址解析...")
 		result = doParser(url)
@@ -109,8 +103,6 @@ def Start(args_1, args_2, args_3):
 def MainArgs():
 	try:
 		global url #影片網址(input)
-		global file_path #: 下載後的影片要儲存的google drive位置(input)
-		global thread_num #多執行緒數量(input)
 		global video_id #:影片番號	
 		global file_name #: 影片儲存名稱
 		global url_m3u8 #: m3u8檔url
@@ -121,15 +113,9 @@ def MainArgs():
 		#參數
 		parser = argparse.ArgumentParser()
 		parser.add_argument("url", help="Write the url on here")
-		parser.add_argument("file_path", help="Write the file_path on here")
-		parser.add_argument("thread_num", help="Write the thread_num id on here")
 		args = parser.parse_args()
 		#輸入要處理的影片網址
 		url = args.url
-		#下載的位置
-		file_path = args.file_path
-		#多執行緒數量
-		thread_num = args.thread_num
 		#擷取url資訊
 		print("開始進行網址解析...")
 		result = doParser(url)
@@ -144,8 +130,9 @@ def MainArgs():
 		url_inits  = result_2[2]
 	except Exception as e:
 		print(e)
-		print("網址解析失敗!")		
-MainArgs()
+		print("網址解析失敗!")	
+		
+#MainArgs()
 
 
 
