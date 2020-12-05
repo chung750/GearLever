@@ -13,6 +13,7 @@ url_m3u8 = "" #: m3u8檔url
 ts_id = "" #: 分割檔ID
 partition_total_size = 0 #: 分割檔總數量
 id_inits = "" #: 開頭檔ID 
+url_ts = "" #: ts下載檔url 
 url_inits = "" #: 開頭檔的url
 
 def doParser(url):
@@ -61,7 +62,9 @@ def doDownload(url_m3u8, ts_id):
 			print(ts_id +".m3u8讀取失敗!")
 			print(e)
 		try:
-			url_inits = url_m3u8[:-5].strip(url_m3u8[:-5].split('/')[-1]) + id_inits + '.ts'
+			url_ts = url_m3u8[:-5].strip(url_m3u8[:-5].split('/')[-1])
+			url_inits = url_ts + id_inits + '.ts'
+			print('[ts下載檔url:'+ url_ts +']')
 			print('[開頭檔url:'+ url_inits +']')
 			#下載開頭檔
 			wget.download(url_inits)
@@ -69,7 +72,7 @@ def doDownload(url_m3u8, ts_id):
 		except Exception as e:
 			print("開頭檔下載失敗!")
 			print(e)	
-		return partition_total_size, id_inits, url_inits
+		return partition_total_size, id_inits, url_ts, url_inits
 	except :
 		return
 
@@ -82,6 +85,7 @@ def Start(args_1):
 		global ts_id #: 分割檔ID
 		global partition_total_size #: 分割檔總數量
 		global id_inits #: 開頭檔ID 
+		global url_ts #: ts下載檔url 
 		global url_inits #: 開頭檔的url
 		#輸入要處理的影片網址
 		url = args_1
@@ -96,7 +100,8 @@ def Start(args_1):
 		result_2 = doDownload(url_m3u8, ts_id)
 		partition_total_size = result_2[0]
 		id_inits  = result_2[1]
-		url_inits  = result_2[2]
+		url_ts  = result_2[2]
+		url_inits  = result_2[3]
 	except :
 		print("網址解析失敗!")
 		
@@ -109,6 +114,7 @@ def MainArgs():
 		global ts_id #: 分割檔ID
 		global partition_total_size #: 分割檔總數量
 		global id_inits #: 開頭檔ID 
+		global url_ts #: ts下載檔url 
 		global url_inits #: 開頭檔的url
 		#參數
 		parser = argparse.ArgumentParser()
@@ -127,12 +133,13 @@ def MainArgs():
 		result_2 = doDownload(url_m3u8, ts_id)
 		partition_total_size = result_2[0]
 		id_inits  = result_2[1]
-		url_inits  = result_2[2]
+		url_ts  = result_2[2]
+		url_inits  = result_2[3]
 	except Exception as e:
 		print(e)
 		print("網址解析失敗!")	
 		
-#MainArgs()
+MainArgs()
 
 
 
