@@ -3,7 +3,7 @@ import argparse
 from bs4 import BeautifulSoup
 import requests
 import wget
-import glo_variable as gl
+import gl_variable as gl
 '''
 url = "" #影片網址(input)
 file_path = "" #: 下載後的影片要儲存的google drive位置(input)
