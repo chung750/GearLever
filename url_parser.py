@@ -3,7 +3,8 @@ import argparse
 from bs4 import BeautifulSoup
 import requests
 import wget
-
+import glo_variable as gl
+'''
 url = "" #影片網址(input)
 file_path = "" #: 下載後的影片要儲存的google drive位置(input)
 thread_num = "" #多執行緒數量(input)
@@ -15,6 +16,7 @@ partition_total_size = 0 #: 分割檔總數量
 id_inits = "" #: 開頭檔ID 
 url_ts = "" #: ts下載檔url 
 url_inits = "" #: 開頭檔的url
+'''
 
 def doParser(url):
 	try:
@@ -78,30 +80,33 @@ def doDownload(url_m3u8, ts_id):
 
 def Start(args_1):
 	try:
-		global url #影片網址(input)
-		global video_id #:影片番號	
-		global file_name #: 影片儲存名稱
-		global url_m3u8 #: m3u8檔url
-		global ts_id #: 分割檔ID
-		global partition_total_size #: 分割檔總數量
-		global id_inits #: 開頭檔ID 
-		global url_ts #: ts下載檔url 
-		global url_inits #: 開頭檔的url
 		#輸入要處理的影片網址
 		url = args_1
 		#擷取url資訊
 		print("開始進行網址解析...")
 		result = doParser(url)
+		gl.set_value('video_id', result[0])
+		gl.set_value('file_name', result[1])
+		gl.set_value('url_m3u8', result[2])
+		gl.set_value('ts_id', result[3])
+		'''
 		video_id = result[0]
 		file_name = result[1]
 		url_m3u8 = result[2]
 		ts_id = result[3]
+		'''
 		#下m3u8&開頭檔
 		result_2 = doDownload(url_m3u8, ts_id)
+		gl.set_value('partition_total_size', result_2[0])
+		gl.set_value('id_inits', result_2[1])
+		gl.set_value('url_ts', result_2[2])
+		gl.set_value('url_inits', result_2[3])
+		'''
 		partition_total_size = result_2[0]
 		id_inits  = result_2[1]
 		url_ts  = result_2[2]
 		url_inits  = result_2[3]
+		'''
 	except :
 		print("網址解析失敗!")
 		
@@ -125,16 +130,28 @@ def MainArgs():
 		#擷取url資訊
 		print("開始進行網址解析...")
 		result = doParser(url)
+		gl.set_value('video_id', result[0])
+		gl.set_value('file_name', result[1])
+		gl.set_value('url_m3u8', result[2])
+		gl.set_value('ts_id', result[3])
+		'''
 		video_id = result[0]
 		file_name = result[1]
 		url_m3u8 = result[2]
 		ts_id = result[3]
+		'''
 		#下m3u8&開頭檔
 		result_2 = doDownload(url_m3u8, ts_id)
+		gl.set_value('partition_total_size', result_2[0])
+		gl.set_value('id_inits', result_2[1])
+		gl.set_value('url_ts', result_2[2])
+		gl.set_value('url_inits', result_2[3])
+		'''
 		partition_total_size = result_2[0]
 		id_inits  = result_2[1]
 		url_ts  = result_2[2]
 		url_inits  = result_2[3]
+		'''
 	except Exception as e:
 		print(e)
 		print("網址解析失敗!")	
