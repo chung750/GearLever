@@ -148,8 +148,8 @@ def MainArgs():
 	except Exception as e:
 		print(e)
 		print("網址解析失敗!")	
-		
-MainArgs()
+if __name__ == '__main__':		
+	MainArgs()
 
 
 
