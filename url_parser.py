@@ -76,7 +76,7 @@ def doDownload(url_m3u8, ts_id):
 			print(e)	
 		return partition_total_size, id_inits, url_ts, url_inits
 	except :
-		return
+		print("檔案下載失敗!")
 
 def Start(args_1):
 	try:
@@ -97,7 +97,7 @@ def Start(args_1):
 		ts_id = result[3]
 		'''
 		#下m3u8&開頭檔
-		result_2 = doDownload(url_m3u8, ts_id)
+		result_2 = doDownload(gl.get_value('url_m3u8'), gl.get_value('ts_id'))
 		gl.set_value('partition_total_size', result_2[0])
 		gl.set_value('id_inits', result_2[1])
 		gl.set_value('url_ts', result_2[2])
