@@ -2,7 +2,7 @@
 import argparse
 from bs4 import BeautifulSoup
 import requests
-import wget
+import urllib
 from GearLever import gl_variable as gl
 '''
 url = "" #影片網址(input)
@@ -43,7 +43,7 @@ def doDownload(url_m3u8, ts_id):
 	try:
 		try:
 			#下載m3u8檔
-			wget.download(url_m3u8)
+			urllib.request.urlretrieve(url_m3u8,ts_id+".m3u8")
 			print('\nm3u8下載完成!')
 		except Exception as e:
 			print("m3u8下載失敗!")
@@ -69,7 +69,7 @@ def doDownload(url_m3u8, ts_id):
 			print('[ts下載檔url:'+ url_ts +']')
 			print('[開頭檔url:'+ url_inits +']')
 			#下載開頭檔
-			wget.download(url_inits)
+			urllib.request.urlretrieve(url_inits, id_inits+".ts")
 			print('\n開頭檔下載完成!')
 		except Exception as e:
 			print("開頭檔下載失敗!")
