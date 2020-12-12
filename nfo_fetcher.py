@@ -16,26 +16,110 @@ def NfoProcedure(file_name, video_id):
 		soup_jable = BeautifulSoup(requests.get(jable_url).text,features="html.parser") #抓取整個html原始碼
 		try:
 			info_selector = "div.container div.info p" #塞選器
+			dict_info = {} #影片資訊
+			list_string = []
+			for i in soup_javbus.select(info_selector):
+				t = i.get_text().replace('\n','').replace(' ','').split(':')
+				for j in t:
+					if j != '': list_string.append(j)
+			for i in range(len(list_string)):
+				if( i%2 == 0): dict_info[list_string[i]] = list_string[i+1] 
 			#nfo各個標籤
-			nfo_title = soup_javbus.title.string
-			nfo_studio = soup_javbus.select(info_selector)[4].contents[2].string
-			nfo_year = soup_javbus.select(info_selector)[1].contents[1].strip()[0:4]  
-			nfo_outline = soup_jable.find("meta", property="og:title")["content"]
-			nfo_plot = nfo_outline
-			nfo_runtime = soup_javbus.select(info_selector)[2].contents[1]
-			nfo_director = soup_javbus.select(info_selector)[5].contents[2].string 
-			nfo_poster = video_id + '-poster.jpg'
-			nfo_thumb = video_id + '-thumb.jpg'
-			nfo_fanart = video_id + '-fanart.jpg'
-			nfo_name = [k.string for k in soup_javbus.select("div.container div.info div.star-name")]
-			nfo_maker = nfo_studio  
-			nfo_tag = [j.replace(' ','') for j in list(filter(None,[g.string for g in soup_javbus.select("div.container div.info span.genre")]))] + [h.string.replace(' ','') for h in soup_jable.select("h5.tags a")]
-			nfo_genre = nfo_tag 
-			nfo_num = soup_javbus.select(info_selector)[0].contents[2].string
-			nfo_release = soup_javbus.select(info_selector)[1].contents[1].strip()
-			nfo_premiered = nfo_release
-			nfo_cover = soup_javbus.select("div.container div.screencap a")[0].get("href")
-			nfo_website = javbus_url
+			try:
+				nfo_title = soup_javbus.title.string
+			except:
+				print('Error: nfo_title')
+				nfo_title = ''
+			try:	
+				nfo_studio = dict_info['製作商']
+			except:
+				print('Error: nfo_studio')
+				nfo_studio = ''
+			try:
+				nfo_year = dict_info['發行日期'].strip()[0:4]  
+			except:
+				print('Error: nfo_year')
+				nfo_year = ''
+			try:
+				nfo_outline = soup_jable.find("meta", property="og:title")["content"]
+			except:
+				print('Error: nfo_outline')
+				nfo_outline = ''
+			try:
+				nfo_plot = nfo_outline
+			except:
+				print('Error: nfo_plot')
+				nfo_plot = ''
+			try:
+				nfo_runtime = dict_info['長度']
+			except:
+				print('Error: nfo_runtime')
+				nfo_runtime = ''
+			try:
+				nfo_director = dict_info['發行商'] 
+			except:
+				print('Error: nfo_director')
+				nfo_director = ''
+			try:
+				nfo_poster = video_id + '-poster.jpg'
+			except:
+				print('Error: nfo_poster')
+				nfo_poster = ''
+			try:
+				nfo_thumb = video_id + '-thumb.jpg'
+			except:
+				print('Error: nfo_thumb')
+				nfo_thumb = ''
+			try:
+				nfo_fanart = video_id + '-fanart.jpg'
+			except:
+				print('Error: nfo_fanart')
+				nfo_fanart = ''
+			try:
+				nfo_name = [k.string for k in soup_javbus.select("div.container div.info div.star-name")]
+			except:
+				print('Error: nfo_name')
+				nfo_name = ''
+			try:
+				nfo_maker = nfo_studio  
+			except:
+				print('Error: nfo_maker')
+				nfo_maker = ''
+			try:
+				nfo_tag = [j.replace(' ','') for j in list(filter(None,[g.string for g in soup_javbus.select("div.container div.info span.genre")]))] + [h.string.replace(' ','') for h in soup_jable.select("h5.tags a")]
+			except:
+				print('Error: nfo_tag')
+				nfo_tag = ''
+			try:
+				nfo_genre = nfo_tag 
+			except:
+				print('Error: nfo_genre')
+				nfo_genre = ''
+			try:
+				nfo_num = dict_info['識別碼']
+			except:
+				print('Error: nfo_num')
+				nfo_num = ''
+			try:
+				nfo_release = dict_info['發行日期']
+			except:
+				print('Error: nfo_release')
+				nfo_release = ''
+			try:
+				nfo_premiered = nfo_release
+			except:
+				print('Error: nfo_premiered')
+				nfo_premiered = ''
+			try:
+				nfo_cover = soup_javbus.select("div.container div.screencap a")[0].get("href")
+			except:
+				print('Error: nfo_cover')
+				nfo_cover = ''
+			try:
+				nfo_website = javbus_url
+			except:
+				print('Error: nfo_website')
+				nfo_website = ''
 			#整合字串
 			text_up = '<?xml version="1.0" encoding="UTF-8" ?>\n<movie>\n <title>'+nfo_title+'</title>\n  <set>\n  </set>\n  <studio>'+nfo_studio+'</studio>\n  <year>'+nfo_year+'</year>\n  <outline>'+nfo_outline+'</outline>\n  <plot>'+nfo_plot+'</plot>\n  <runtime>'+nfo_runtime+'</runtime>\n  <director>'+nfo_director+'</director>\n  <poster>'+nfo_poster+'</poster>\n  <thumb>'+nfo_thumb+'/thumb>\n  <fanart>'+nfo_fanart+'</fanart>'
 			text_middle = "  <maker>"+nfo_maker+"</maker>\n  <label>\n  </label>"
@@ -149,4 +233,5 @@ def Start(args_1, args_2):
 		print(e)
 		print("元數據擷取失敗!")		
 		
-#main()
+if __name__ == '__main__':		
+	MainArgs()
