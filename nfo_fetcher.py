@@ -21,9 +21,10 @@ def NfoProcedure(file_name, video_id):
 			for i in soup_javbus.select(info_selector):
 				t = i.get_text().replace('\n','').replace(' ','').split(':')
 				for j in t:
-					if j != '': list_string.append(j)
-			for i in range(len(list_string)):
-				if( i%2 == 0): dict_info[list_string[i]] = list_string[i+1] 
+					list_string.append(j)
+					if len(t) == 1: list_string.append('')
+			for i in range(len(list_string)): 
+				if( i%2 == 0): dict_info[list_string[i]] = list_string[i+1]
 			#nfo各個標籤
 			try:
 				nfo_title = soup_javbus.title.string
@@ -77,6 +78,7 @@ def NfoProcedure(file_name, video_id):
 				nfo_fanart = ''
 			try:
 				nfo_name = [k.string for k in soup_javbus.select("div.container div.info div.star-name")]
+				if (len(nfo_name) == 0): nfo_name = ['素人']
 			except:
 				print('Error: nfo_name')
 				nfo_name = ''
