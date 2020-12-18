@@ -88,7 +88,7 @@ def doReDownloadTs(miss_list):
 				downloaded_num = downloaded_num+1
 				nowtime = str(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()+28800)))
 				print(">>>>> ["+nowtime+"] 補下載進度: "+str(downloaded_num)+"/"+str(len(miss_list))+" (多執行緒總數:"+str(threading.active_count()-system_threads_num)+")")
-				doReDownloadTs() #下載完畢後執行下一個下載
+				doReDownloadTs(miss_list) #下載完畢後執行下一個下載
 			else:
 				thread_switch = False
 				print("[Info] 終止執行緒:"+threading.currentThread().name)
@@ -103,7 +103,7 @@ def startThreading(num, threads, func, miss_list):
 	try:
 		threads.clear()
 		for i in range(num):
-			threads.append(threading.Thread(target = func, daemon=True, args=[miss_list]))
+			threads.append(threading.Thread(target = func, args=[miss_list]))
 			threads[i].start()
 		print("[Info] 啟動多執行緒...")
 	except Exception as e:
@@ -112,66 +112,70 @@ def startThreading(num, threads, func, miss_list):
 #多執行管理
 def ThreadingController(threads, target_rate, duration, func, miss_list):
 	last_downloaded_num = 0
-	while thread_switch:
-		##維護多執行緒
-		try:
-			for i in range(len(threads)):
-				if not threads[i].is_alive():
-					threads[i] = threading.Thread(target = func, daemon=True, args=[miss_list])
-					threads[i].start()
-		except Exception as e:
-			print(e)
-			print("[Error] 維護多執行緒失敗!")
-		##流量控管(目標維持每次控管階段時間內的平均下載數量為8)
-		try:
-			#每次控管階段紀錄一次下載檔案數
-			if not downloaded_num_record_list: 
-				downloaded_num_record_list.append(downloaded_num)
-			else: 
-				downloaded_num_record_list.append(downloaded_num - last_downloaded_num)
-			last_downloaded_num = downloaded_num
-		except Exception as e:
-			print(e)
-			print("[Error] 紀錄下載進度失敗!")
-		try:
-			if (len(downloaded_num_record_list)%5 == 0): #每5次控管階段QOS一次
-				global qos_waiting_time
-				download_rate = round(sum(downloaded_num_record_list[-5:])/5, 2) #計算最近的25秒的平均下載數量
-				#平均下載速率低於target_rate-3
-				if (download_rate < target_rate-3): 
-					if (qos_waiting_time > 1): #限制延遲時間不得低於0
-						qos_waiting_time = qos_waiting_time - 2
-						print("[Info] 流量管制: 目前平均下載速度("+str(download_rate)+"/"+str(duration)+"s) 降低延遲時間("+str(qos_waiting_time)+"s)")
-					else: 
+	try:
+		while thread_switch:
+			##維護多執行緒
+			try:
+				for i in range(len(threads)):
+					if not threads[i].is_alive():
+						threads[i] = threading.Thread(target = func, args=[miss_list])
+						threads[i].start()
+			except Exception as e:
+				print(e)
+				print("[Error] 維護多執行緒失敗!")
+			##流量控管(目標維持每次控管階段時間內的平均下載數量為8)
+			try:
+				#每次控管階段紀錄一次下載檔案數
+				if not downloaded_num_record_list: 
+					downloaded_num_record_list.append(downloaded_num)
+				else: 
+					downloaded_num_record_list.append(downloaded_num - last_downloaded_num)
+				last_downloaded_num = downloaded_num
+			except Exception as e:
+				print(e)
+				print("[Error] 紀錄下載進度失敗!")
+			try:
+				if (len(downloaded_num_record_list)%5 == 0): #每5次控管階段QOS一次
+					global qos_waiting_time
+					download_rate = round(sum(downloaded_num_record_list[-5:])/5, 2) #計算最近的25秒的平均下載數量
+					#平均下載速率低於target_rate-3
+					if (download_rate < target_rate-3): 
+						if (qos_waiting_time > 1): #限制延遲時間不得低於0
+							qos_waiting_time = qos_waiting_time - 2
+							print("[Info] 流量管制: 目前平均下載速度("+str(download_rate)+"/"+str(duration)+"s) 降低延遲時間("+str(qos_waiting_time)+"s)")
+						else: 
+							print("[Info] 流量管制: 目前平均下載速度("+str(download_rate)+"/"+str(duration)+"s) 目前延遲時間("+str(qos_waiting_time)+"s)")
+					#平均下載速率低於target_rate-3 ~ target_rate-1
+					elif (download_rate >= target_rate-3 and download_rate < target_rate-1):
+						if (qos_waiting_time > 0): #限制延遲時間不得低於0
+							qos_waiting_time = qos_waiting_time - 1
+							print("[Info] 流量管制: 目前平均下載速度("+str(download_rate)+"/"+str(duration)+"s) 降低延遲時間("+str(qos_waiting_time)+"s)")
+						else: 
+							print("[Info] 流量管制: 目前平均下載速度("+str(download_rate)+"/"+str(duration)+"s) 目前延遲時間("+str(qos_waiting_time)+"s)")
+					#平均下載速率高於target_rate+1 ~ target_rate+3		
+					elif (download_rate >= target_rate+1 and download_rate < target_rate+3):
+						if (qos_waiting_time < 6): #限制延遲時間不得超過6
+							qos_waiting_time = qos_waiting_time + 1
+							print("[Info] 流量管制: 目前平均下載速度("+str(download_rate)+"/"+str(duration)+"s) 加速延遲時間("+str(qos_waiting_time)+"s)")
+						else: 
+							print("[Info] 流量管制: 目前平均下載速度("+str(download_rate)+"/"+str(duration)+"s) 目前延遲時間("+str(qos_waiting_time)+"s)")
+					#平均下載速率高於target_rate+3		
+					elif (download_rate >= target_rate+3):
+						if (qos_waiting_time < 5): #限制延遲時間不得超過6
+							qos_waiting_time = qos_waiting_time + 2
+							print("[Info] 流量管制: 目前平均下載速度("+str(download_rate)+"/"+str(duration)+"s) 加速延遲時間("+str(qos_waiting_time)+"s)")
+						else: 
+							print("[Info] 流量管制: 目前平均下載速度("+str(download_rate)+"/"+str(duration)+"s) 目前延遲時間("+str(qos_waiting_time)+"s)")
+					#平均下載速率符合預期
+					else:    
 						print("[Info] 流量管制: 目前平均下載速度("+str(download_rate)+"/"+str(duration)+"s) 目前延遲時間("+str(qos_waiting_time)+"s)")
-				#平均下載速率低於target_rate-3 ~ target_rate-1
-				elif (download_rate >= target_rate-3 and download_rate < target_rate-1):
-					if (qos_waiting_time > 0): #限制延遲時間不得低於0
-						qos_waiting_time = qos_waiting_time - 1
-						print("[Info] 流量管制: 目前平均下載速度("+str(download_rate)+"/"+str(duration)+"s) 降低延遲時間("+str(qos_waiting_time)+"s)")
-					else: 
-						print("[Info] 流量管制: 目前平均下載速度("+str(download_rate)+"/"+str(duration)+"s) 目前延遲時間("+str(qos_waiting_time)+"s)")
-				#平均下載速率高於target_rate+1 ~ target_rate+3		
-				elif (download_rate >= target_rate+1 and download_rate < target_rate+3):
-					if (qos_waiting_time < 6): #限制延遲時間不得超過6
-						qos_waiting_time = qos_waiting_time + 1
-						print("[Info] 流量管制: 目前平均下載速度("+str(download_rate)+"/"+str(duration)+"s) 加速延遲時間("+str(qos_waiting_time)+"s)")
-					else: 
-						print("[Info] 流量管制: 目前平均下載速度("+str(download_rate)+"/"+str(duration)+"s) 目前延遲時間("+str(qos_waiting_time)+"s)")
-				#平均下載速率高於target_rate+3		
-				elif (download_rate >= target_rate+3):
-					if (qos_waiting_time < 5): #限制延遲時間不得超過6
-						qos_waiting_time = qos_waiting_time + 2
-						print("[Info] 流量管制: 目前平均下載速度("+str(download_rate)+"/"+str(duration)+"s) 加速延遲時間("+str(qos_waiting_time)+"s)")
-					else: 
-						print("[Info] 流量管制: 目前平均下載速度("+str(download_rate)+"/"+str(duration)+"s) 目前延遲時間("+str(qos_waiting_time)+"s)")
-				#平均下載速率符合預期
-				else:    
-					print("[Info] 流量管制: 目前平均下載速度("+str(download_rate)+"/"+str(duration)+"s) 目前延遲時間("+str(qos_waiting_time)+"s)")
-		except Exception as e:
-			print(e)
-			print("[Error] 流量管制失敗!")
-		time.sleep(duration)
+			except Exception as e:
+				print(e)
+				print("[Error] 流量管制失敗!")
+			time.sleep(duration)
+	except KeyboardInterrupt:
+		print(e)
+		thread_switch = False
 #堵塞多執行緒
 def joinThreading(num, threads):
 	global thread_switch	
