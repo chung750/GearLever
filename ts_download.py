@@ -142,7 +142,7 @@ def main():
 		#堵塞多執行緒結束
 		joinThreading(thread_num, threads)
 		print("[Info] 下載完成!")
-        timeelapsed = time.time() - starttime #總共下載時間
+		timeelapsed = time.time() - starttime #總共下載時間
 		print('[Info] 共花費'+str(time.strftime('%M分%S秒', time.localtime(timeelapsed))))
 	except Exception as e:
 		global thread_switch
