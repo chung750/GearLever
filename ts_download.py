@@ -69,5 +69,5 @@ def main():
 		thread_switch = False
 		print(e)
 		
-if __name__ == '__main__':		
-	main()		
+#if __name__ == '__main__':		
+#	main()		
