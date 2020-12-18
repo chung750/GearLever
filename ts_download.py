@@ -146,6 +146,9 @@ def ThreadingController(threads, target_rate, duration, func, miss_list):
 						if (qos_waiting_time > 1): #限制延遲時間不得低於0
 							qos_waiting_time = qos_waiting_time - 2
 							print("[Info] 流量管制: 目前平均下載速度("+str(download_rate)+"/"+str(duration)+"s) 降低延遲時間("+str(qos_waiting_time)+"s)")
+						elif  (qos_waiting_time == 1):  #限制延遲時間不得低於0
+							qos_waiting_time = qos_waiting_time - 1
+							print("[Info] 流量管制: 目前平均下載速度("+str(download_rate)+"/"+str(duration)+"s) 降低延遲時間("+str(qos_waiting_time)+"s)")
 						else: 
 							print("[Info] 流量管制: 目前平均下載速度("+str(download_rate)+"/"+str(duration)+"s) 目前延遲時間("+str(qos_waiting_time)+"s)")
 					#平均下載速率低於target_rate-3 ~ target_rate-1
@@ -166,6 +169,9 @@ def ThreadingController(threads, target_rate, duration, func, miss_list):
 					elif (download_rate >= target_rate+3):
 						if (qos_waiting_time < 5): #限制延遲時間不得超過6
 							qos_waiting_time = qos_waiting_time + 2
+							print("[Info] 流量管制: 目前平均下載速度("+str(download_rate)+"/"+str(duration)+"s) 加速延遲時間("+str(qos_waiting_time)+"s)")
+						elif  (qos_waiting_time == 5): #限制延遲時間不得超過6
+							qos_waiting_time = qos_waiting_time + 1
 							print("[Info] 流量管制: 目前平均下載速度("+str(download_rate)+"/"+str(duration)+"s) 加速延遲時間("+str(qos_waiting_time)+"s)")
 						else: 
 							print("[Info] 流量管制: 目前平均下載速度("+str(download_rate)+"/"+str(duration)+"s) 目前延遲時間("+str(qos_waiting_time)+"s)")
