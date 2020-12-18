@@ -43,7 +43,7 @@ def initializeParameter():
 		print("[Error] 初始化參數失敗!")
 	
 #主要下載job
-def doDownloadTs():
+def doDownloadTs(list):
 	try:
 		global thread_switch
 		#判斷多執行緒開關是否開啟
@@ -60,7 +60,7 @@ def doDownloadTs():
 				downloaded_num = downloaded_num+1
 				nowtime = str(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()+28800)))
 				print(">>>>> ["+nowtime+"] 下載進度: "+str(downloaded_num)+"/"+str(partition_total_size)+" (多執行緒總數:"+str(threading.active_count()-system_threads_num)+")")
-				doDownloadTs() #下載完畢後執行下一個下載
+				doDownloadTs(list) #下載完畢後執行下一個下載
 			else:
 				thread_switch = False
 				print("[Info] 終止執行緒:"+threading.currentThread().name)
