@@ -39,6 +39,8 @@ def doDownloadTs():
 				downloaded_num = downloaded_num+1
 				print(">>> 下載進度: "+str(downloaded_num)+"/"+str(partition_total_size)+" (多執行緒總數:"str(threading.active_count()-system_threads_num)+")")
 				doDownloadTs() #下載完畢後執行下一個下載
+			else:
+				print("[Info] 終止執行緒:"+threading.currentThread().name)
 		else:
 			print("[Info] 終止執行緒:"+threading.currentThread().name)
 	except Exception as e:
@@ -56,7 +58,7 @@ def startThreading(num, threads):
 		print(e)
 		print("[Error] 建立多執行緒失敗!")
 #多執行管理
-def controlThreading(threads, target_rate, duration):
+def ThreadingController(threads, target_rate, duration):
 	while thread_switch:
 		##維護多執行緒
 		try:
@@ -117,12 +119,14 @@ def controlThreading(threads, target_rate, duration):
 		except Exception as e:
 			print(e)
 			print("[Error] 流量管制失敗!")
-		time.sleep(5)
+		time.sleep(duration)
 #堵塞多執行緒
 def joinThreading(num, threads):
+	global thread_switch	
 	for i in range(num):
 		threads[i].join()
-		print("[Info] 多執行緒已全部終止!")
+	thread_switch = False
+	print("[Info] 多執行緒已全部終止!")
 #main
 def main():
 	try:
@@ -131,11 +135,14 @@ def main():
 		#開始執行多執行緒
 		print('開始進行分割檔的下載!')
 		startThreading(thread_num, threads)
+		#每5秒管控一次多執行緒，流量控制在下載速率為8
+		ThreadingController(threads, 8, 5)
 		joinThreading(thread_num, threads)
 		#監看下載進度(每5秒鐘)
 		#checkDownload(check_duration)
 		
 	except Exception as e:
+		global thread_switch
 		thread_switch = False
 		print(e)
 		
