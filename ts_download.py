@@ -230,8 +230,7 @@ def restart(thread_num, path):
 			timeelapsed = time.time() - starttime #總共下載時間
 			print('[Info] 共花費'+str(time.strftime('%M分%S秒', time.localtime(timeelapsed))))
 			restart(thread_num, path)
-		else:
-			#do ffmpeg
+
 	except Exception as e:
 		print(e)
 		print("[Error] 補下載失敗!")
