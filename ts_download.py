@@ -28,7 +28,7 @@ def doDownloadTs():
 		#判斷多執行緒開關是否開啟
 		if thread_switch == True:
 			global current_partition
-			global download_num_list
+			global downloaded_num
 			download_partition = current_partition
 			current_partition = current_partition + 1 
 			#判斷欲下載的分割檔ID是否超過最後一個
@@ -45,7 +45,7 @@ def doDownloadTs():
 			print("[Info] 終止執行緒:"+threading.currentThread().name)
 	except Exception as e:
 		print(e)
-		print("[Error] 下載分割檔"+download_partition+"出現錯誤!")
+		print("[Error] 下載分割檔"+str(download_partition)+"出現錯誤!")
 	
 #建立並執行多執行緒 
 def startThreading(num, threads):
@@ -73,10 +73,10 @@ def ThreadingController(threads, target_rate, duration):
 		try:
 			#每次控管階段紀錄一次下載檔案數
 			last_downloaded_num = 0
-			if not record_download_num: 
-				record_download_num.append(downloaded_num)
+			if not downloaded_num_record_list: 
+				downloaded_num_record_list.append(downloaded_num)
 			else: 
-				record_download_num.append(downloaded_num - last_downloaded_num)
+				downloaded_num_record_list.append(downloaded_num - last_downloaded_num)
 			last_downloaded_num = downloaded_num
 		except Exception as e:
 			print(e)
@@ -84,7 +84,7 @@ def ThreadingController(threads, target_rate, duration):
 		try:
 			if (len(downloaded_num_record_list)%5 == 0): #每5次控管階段QOS一次
 				global qos_waiting_time
-				download_rate = round(sum(record_download_num[-5:])/5, 2) #計算最近的25秒的平均下載數量
+				download_rate = round(sum(downloaded_num_record_list[-5:])/5, 2) #計算最近的25秒的平均下載數量
 				#平均下載速率低於target_rate-3
 				if (download_rate < target_rate-3): 
 					if (qos_waiting_time > 0): #限制延遲時間不得低於0
