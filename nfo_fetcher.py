@@ -196,7 +196,7 @@ def CreatFolder(folder):
 	if not os.path.exists(folder):  # 新建failed文件夹
 		try:
 			os.makedirs(folder)
-			print("[Info] 資料夾建立:"+folder)
+			print("[Info] 資料夾建立: "+folder)
 		except:
 			print("[Error] failed! can not be make folder")
 	return   
@@ -221,7 +221,7 @@ def MainArgs():
 		print("[Error] 元數據擷取失敗!")
 
 #main 2
-def Start(args_1, args_2):
+def start(args_1, args_2):
 	try:
 		print("[Info] 開始進行元數據擷取...")
 		file_name = args_1

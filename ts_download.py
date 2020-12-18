@@ -246,10 +246,10 @@ def restart(thread_num, path):
 			#nfo產生器
 			file_name = gl.get_value('file_name')
 			video_id = gl.get_value('video_id')
-			output_path = nf.Start(file_name, video_id)
+			output_path = nf.start(file_name, video_id)
 			#影片壓制
 			if output_path:
-				suppress_video(file_name, video_id, path, output_path)
+				suppress_video.start(file_name, video_id, path, output_path)
 		except Exception as e:
 			print(e)
 
