@@ -99,25 +99,25 @@ def doReDownloadTs(miss_list):
 		print("[Error] 補下載分割檔"+str(download_partition)+"出現錯誤!")
 
 #建立並執行多執行緒 
-def startThreading(num, threads, func):
+def startThreading(num, threads, func, miss_list):
 	try:
 		threads.clear()
 		for i in range(num):
-			threads.append(threading.Thread(target = func))
+			threads.append(threading.Thread(target = func, args=[miss_list]))
 			threads[i].start()
 		print("[Info] 啟動多執行緒...")
 	except Exception as e:
 		print(e)
 		print("[Error] 建立多執行緒失敗!")
 #多執行管理
-def ThreadingController(threads, target_rate, duration, func):
+def ThreadingController(threads, target_rate, duration, func, miss_list):
 	last_downloaded_num = 0
 	while thread_switch:
 		##維護多執行緒
 		try:
 			for i in range(len(threads)):
 				if not threads[i].is_alive():
-					threads[i] = threading.Thread(target = func)
+					threads[i] = threading.Thread(target = func, args=[miss_list])
 					threads[i].start()
 		except Exception as e:
 			print(e)
@@ -193,9 +193,9 @@ def start(thread_num, path):
 		#開始執行多執行緒
 		print('[Info] 開始進行分割檔的下載...')
 		starttime = time.time() #開始時間
-		startThreading(thread_num, threads, doDownloadTs)
+		startThreading(thread_num, threads, doDownloadTs, [])
 		#每5秒管控一次多執行緒，流量控制在下載速率為8
-		ThreadingController(threads, 8, 5, doDownloadTs)
+		ThreadingController(threads, 8, 5, doDownloadTs, [])
 		#堵塞多執行緒結束
 		joinThreading(thread_num, threads)
 		print("[Info] 下載完成!")
@@ -221,9 +221,9 @@ def restart(thread_num, path):
 			#開始執行補下載
 			print('[Info] 開始進行分割檔的補下載...')
 			starttime = time.time() #開始時間
-			startThreading(thread_num, threads, doReDownloadTs)
+			startThreading(thread_num, threads, doReDownloadTs, result)
 			#每5秒管控一次多執行緒，流量控制在下載速率為8
-			ThreadingController(threads, 8, 5, doReDownloadTs)
+			ThreadingController(threads, 8, 5, doReDownloadTs, result)
 			#堵塞多執行緒結束
 			joinThreading(thread_num, threads)
 			print("[Info] 補下載完成!")
