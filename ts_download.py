@@ -4,23 +4,38 @@ import threading
 import sys
 import time
 
-#環境參數
-system_threads_num = threading.active_count() #紀錄系統本身的執行緒數量
-#外部參數
-url_ts = gl.get_value('url_ts') #下載網址
-ts_id = gl.get_value('ts_id') #下載分割檔ID
-partition_total_size = gl.get_value('partition_total_size') #總分割檔個數
-#內部參數
-thread_num = 6
-#check_duration = 5 #檢查下載進度間隔
-threads = [] #多執行續
-thread_switch = True #執行續總開關
-downloaded_num = 0 #紀錄目前完成下載的分割檔數量
-downloaded_num_record_list = [] #記錄每5秒的下載檔案數
-qos_waiting_time = 2 #流量控制的預設等待時間
-#global 參數
-current_partition = 0 #紀錄目前下載第幾分割檔
+#參數
+system_threads_num #紀錄系統本身的執行緒數量
+url_ts #下載網址
+ts_id  #下載分割檔ID
+partition_total_size #總分割檔個數
+threads #多執行續
+thread_switch  #執行續總開關
+downloaded_num  #紀錄目前完成下載的分割檔數量
+downloaded_num_record_list  #記錄每5秒的下載檔案數
+qos_waiting_time  #流量控制的預設等待時間
+current_partition  #紀錄目前下載第幾分割檔
 
+#初始化參數
+def initializeParameter():
+	global system_threads_num
+	global url_ts
+	global ts_id
+	global partition_total_size
+	global threads
+	global thread_switch
+	global downloaded_num
+	global downloaded_num_record_list
+	global current_partition
+	system_threads_num = threading.active_count() 
+	url_ts = gl.get_value('url_ts') 
+	ts_id = gl.get_value('ts_id') 
+	partition_total_size = gl.get_value('partition_total_size') 
+	threads.clear()
+	thread_switch = True 
+	downloaded_num = 0 
+	downloaded_num_record_list = [] 
+	current_partition = 0 
 	
 #主要下載job
 def doDownloadTs():
@@ -53,11 +68,10 @@ def doDownloadTs():
 #建立並執行多執行緒 
 def startThreading(num, threads):
 	try:
-		threads.clear() #清空list
 		for i in range(num):
 			threads.append(threading.Thread(target = doDownloadTs))
 			threads[i].start()
-		print("[Info] 啟動多執行緒進行下載...")
+		print("[Info] 啟動多執行緒...")
 	except Exception as e:
 		print(e)
 		print("[Error] 建立多執行緒失敗!")
@@ -131,13 +145,16 @@ def joinThreading(num, threads):
 		threads[i].join()
 	thread_switch = False
 	print("[Info] 多執行緒已全部終止!")
+	
 #main
-def main():
+def main(thread_num):
 	try:
+		#初始化參數
+		initializeParameter()
 		#設定遞迴上限，避免遞迴過多被擋
 		sys.setrecursionlimit(1000000)
 		#開始執行多執行緒
-		print('開始進行分割檔的下載!')
+		print('開始進行分割檔的下載...')
 		starttime = time.time() #開始時間
 		startThreading(thread_num, threads)
 		#每5秒管控一次多執行緒，流量控制在下載速率為8
