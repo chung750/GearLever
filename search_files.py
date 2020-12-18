@@ -13,7 +13,7 @@ def search(ts_id, total_size, path):
 		print("[Warning] 下載的分割檔有重複!")
 	return listd
 
- def doSearch(ts_id, total_size, path):
+def doSearch(ts_id, total_size, path):
 	print("[Info] 開始查驗下載檔案....")
 	#搜尋有無缺漏
 	result = search(ts_id, total_size, path)
