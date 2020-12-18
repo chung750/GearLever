@@ -111,6 +111,7 @@ def startThreading(num, threads, func, miss_list):
 		print("[Error] 建立多執行緒失敗!")
 #多執行管理
 def ThreadingController(threads, target_rate, duration, func, miss_list):
+	global thread_switch
 	last_downloaded_num = 0
 	try:
 		while thread_switch:
