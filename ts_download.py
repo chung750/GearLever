@@ -37,7 +37,8 @@ def doDownloadTs():
 				url_go = url_ts+ts_id+str(download_partition)+'.ts'
 				urllib.request.urlretrieve(url_go,ts_id+str(download_partition)+'.ts')
 				downloaded_num = downloaded_num+1
-				print(">>> 下載進度: "+str(downloaded_num)+"/"+str(partition_total_size)+" (多執行緒總數:"+str(threading.active_count()-system_threads_num)+")")
+				nowtime = str(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()+28800)))
+				print(">>>>> ["+nowtime+"]下載進度: "+str(downloaded_num)+"/"+str(partition_total_size)+" (多執行緒總數:"+str(threading.active_count()-system_threads_num)+")")
 				doDownloadTs() #下載完畢後執行下一個下載
 			else:
 				print("[Info] 終止執行緒:"+threading.currentThread().name)
@@ -59,6 +60,7 @@ def startThreading(num, threads):
 		print("[Error] 建立多執行緒失敗!")
 #多執行管理
 def ThreadingController(threads, target_rate, duration):
+	last_downloaded_num = 0
 	while thread_switch:
 		##維護多執行緒
 		try:
@@ -72,7 +74,6 @@ def ThreadingController(threads, target_rate, duration):
 		##流量控管(目標維持每次控管階段時間內的平均下載數量為8)
 		try:
 			#每次控管階段紀錄一次下載檔案數
-			last_downloaded_num = 0
 			if not downloaded_num_record_list: 
 				downloaded_num_record_list.append(downloaded_num)
 			else: 
@@ -134,13 +135,15 @@ def main():
 		sys.setrecursionlimit(1000000)
 		#開始執行多執行緒
 		print('開始進行分割檔的下載!')
+		starttime = time.time() #開始時間
 		startThreading(thread_num, threads)
 		#每5秒管控一次多執行緒，流量控制在下載速率為8
 		ThreadingController(threads, 8, 5)
+		#堵塞多執行緒結束
 		joinThreading(thread_num, threads)
-		#監看下載進度(每5秒鐘)
-		#checkDownload(check_duration)
-		
+		print("[Info] 下載完成!")
+        timeelapsed = time.time() - starttime #總共下載時間
+		print('[Info] 共花費'+str(time.strftime('%M分%S秒', time.localtime(timeelapsed))))
 	except Exception as e:
 		global thread_switch
 		thread_switch = False
