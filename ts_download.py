@@ -174,8 +174,8 @@ def ThreadingController(threads, target_rate, duration, func, miss_list):
 				print(e)
 				print("[Error] 流量管制失敗!")
 			time.sleep(duration)
-	except KeyboardInterrupt:
-		print(e)
+	except KeyboardInterrupt as k:
+		print(k)
 		thread_switch = False
 #堵塞多執行緒
 def joinThreading(num, threads):

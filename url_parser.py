@@ -4,10 +4,8 @@ from bs4 import BeautifulSoup
 import requests
 import urllib
 from GearLever import gl_variable as gl
+from GearLever import ts_download
 '''
-url = "" #影片網址(input)
-file_path = "" #: 下載後的影片要儲存的google drive位置(input)
-thread_num = "" #多執行緒數量(input)
 video_id = "" #:影片番號	
 file_name = "" #: 影片儲存名稱
 url_m3u8 = "" #: m3u8檔url
@@ -78,37 +76,29 @@ def doDownload(url_m3u8, ts_id, download_path):
 	except :
 		print("[Error] 檔案下載失敗!")
 
-def start(args_1, args_2):
+def start(url, thread_num, path):
 	try:
 		gl._init()
 		#輸入要處理的影片網址
-		url = args_1
-		download_path = args_2
+		download_url = url
+		download_path = path
 		#擷取url資訊
 		print("[Info] 開始進行網址解析...")
-		result = doParser(url)
+		result = doParser(download_url)
 		gl.set_value('video_id', result[0])
 		gl.set_value('file_name', result[1])
 		gl.set_value('url_m3u8', result[2])
 		gl.set_value('ts_id', result[3])
-		'''
-		video_id = result[0]
-		file_name = result[1]
-		url_m3u8 = result[2]
-		ts_id = result[3]
-		'''
+
 		#下載m3u8&開頭檔
 		result_2 = doDownload(gl.get_value('url_m3u8'), gl.get_value('ts_id'), download_path)
 		gl.set_value('partition_total_size', result_2[0])
 		gl.set_value('id_inits', result_2[1])
 		gl.set_value('url_ts', result_2[2])
 		gl.set_value('url_inits', result_2[3])
-		'''
-		partition_total_size = result_2[0]
-		id_inits  = result_2[1]
-		url_ts  = result_2[2]
-		url_inits  = result_2[3]
-		'''
+		
+		#開始分割檔的下載
+		ts_download.start(thread_num, path)
 	except :
 		print("[Error] 網址解析失敗!")
 		
