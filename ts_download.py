@@ -179,6 +179,7 @@ def ThreadingController(threads, target_rate, duration, func, miss_list):
 	except KeyboardInterrupt as k:
 		print(k)
 		thread_switch = False
+		pass
 #堵塞多執行緒
 def joinThreading(num, threads):
 	global thread_switch	
@@ -243,8 +244,8 @@ def restart(thread_num, path):
 	else: #進行下一階段
 		try:
 			#nfo產生器
-			file_name = gl_variable.get_value('file_name')
-			video_id = gl_variable.get_value('video_id')
+			file_name = gl.get_value('file_name')
+			video_id = gl.get_value('video_id')
 			output_path = nf.Start(file_name, video_id)
 			#影片壓制
 			if output_path:
