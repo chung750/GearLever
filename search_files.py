@@ -10,7 +10,7 @@ def search(ts_id, total_size, path):
 			if not ts_id+str(i)+'.ts' in files:
 				listd.append(i)
 		#確認是否有多下載的
-		if not len(files) == total_size+2:
+		if len(files) > total_size+2:
 			print("[Warning] 下載的分割檔有重複!")
 		return listd
 	except Exception as e:
@@ -24,7 +24,7 @@ def doSearch(ts_id, total_size, path):
 		result = search(ts_id, total_size, path)
 		print("[Info] 查驗完畢!") 
 		if(len(result) == 0):
-			print("[Info] "+str(total_size)+"個分割檔已完整下載") 
+			print("[Info] "+str(total_size)+"個分割檔已完整下載:D") 
 			return []
 		else:
 			print("[Info] 缺少以下分割檔:")

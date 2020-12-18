@@ -79,7 +79,7 @@ def doReDownloadTs(miss_list):
 			global current_partition
 			global downloaded_num
 			#判斷欲下載的分割檔ID是否超過最後一個
-			if current_miss_id <= len(miss_list)-1 :
+			if current_partition <= len(miss_list)-1 :
 				download_partition = miss_list[current_partition]
 				current_partition = current_partition + 1 
 				time.sleep(qos_waiting_time) #此暫停時間用於流量控管
@@ -103,7 +103,7 @@ def startThreading(num, threads, func, miss_list):
 	try:
 		threads.clear()
 		for i in range(num):
-			threads.append(threading.Thread(target = func, args=[miss_list]))
+			threads.append(threading.Thread(target = func, daemon=True, args=[miss_list]))
 			threads[i].start()
 		print("[Info] 啟動多執行緒...")
 	except Exception as e:
@@ -117,7 +117,7 @@ def ThreadingController(threads, target_rate, duration, func, miss_list):
 		try:
 			for i in range(len(threads)):
 				if not threads[i].is_alive():
-					threads[i] = threading.Thread(target = func, args=[miss_list])
+					threads[i] = threading.Thread(target = func, daemon=True, args=[miss_list])
 					threads[i].start()
 		except Exception as e:
 			print(e)
