@@ -5,16 +5,16 @@ import sys
 import time
 
 #參數
-system_threads_num #紀錄系統本身的執行緒數量
-url_ts #下載網址
-ts_id  #下載分割檔ID
-partition_total_size #總分割檔個數
-threads #多執行續
-thread_switch  #執行續總開關
-downloaded_num  #紀錄目前完成下載的分割檔數量
-downloaded_num_record_list  #記錄每5秒的下載檔案數
-qos_waiting_time  #流量控制的預設等待時間
-current_partition  #紀錄目前下載第幾分割檔
+system_threads_num = threading.active_count()  #紀錄系統本身的執行緒數量
+url_ts = gl.get_value('url_ts') #下載網址
+ts_id = gl.get_value('ts_id')   #下載分割檔ID
+partition_total_size = gl.get_value('partition_total_size')  #總分割檔個數
+threads = [] #多執行續
+thread_switch = True  #執行續總開關
+downloaded_num = 0  #紀錄目前完成下載的分割檔數量
+downloaded_num_record_list = []   #記錄每5秒的下載檔案數
+qos_waiting_time = 2  #流量控制的預設等待時間
+current_partition = 0   #紀錄目前下載第幾分割檔
 
 #初始化參數
 def initializeParameter():
@@ -34,7 +34,7 @@ def initializeParameter():
 	threads.clear()
 	thread_switch = True 
 	downloaded_num = 0 
-	downloaded_num_record_list = [] 
+	downloaded_num_record_list.clear() 
 	current_partition = 0 
 	
 #主要下載job
