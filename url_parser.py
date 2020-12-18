@@ -55,7 +55,7 @@ def doDownload(url_m3u8, ts_id):
 				#FileContent = m3u8_file.read()
 				FileasList = m3u8_file.readlines()
 				id_inits = FileasList[4].split('"')[1][:-3]
-				partition_total_size = int(FileasList[-2][len(ts_id):-4])
+				partition_total_size = int(FileasList[-2][len(ts_id):-4])+1
 				print('[分割檔總數:'+ str(partition_total_size) +']')
 				print('[開頭檔ID:'+ id_inits +']')
 		except IOError as e1:
