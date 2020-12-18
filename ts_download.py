@@ -37,7 +37,7 @@ def doDownloadTs():
 				url_go = url_ts+ts_id+str(download_partition)+'.ts'
 				urllib.request.urlretrieve(url_go,ts_id+str(download_partition)+'.ts')
 				downloaded_num = downloaded_num+1
-				print(">>> 下載進度: "+str(downloaded_num)+"/"+str(partition_total_size)+" (多執行緒總數:"str(threading.active_count()-system_threads_num)+")")
+				print(">>> 下載進度: "+str(downloaded_num)+"/"+str(partition_total_size)+" (多執行緒總數:"+str(threading.active_count()-system_threads_num)+")")
 				doDownloadTs() #下載完畢後執行下一個下載
 			else:
 				print("[Info] 終止執行緒:"+threading.currentThread().name)
