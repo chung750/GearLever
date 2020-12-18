@@ -44,13 +44,13 @@ def doDownload(url_m3u8, ts_id, download_path):
 		try:
 			#下載m3u8檔
 			urllib.request.urlretrieve(url_m3u8, download_path+ts_id+".m3u8")
-			print('[Info] nm3u8下載完成!')
+			print('[Info] m3u8下載完成!')
 		except Exception as e:
 			print("[Error] m3u8下載失敗!")
 			print(e)
 		try:
 			#從.m3u8抓取id_inits、partition_total_size
-			m3u8_file_path = "/content/"+ ts_id +".m3u8"
+			m3u8_file_path = download_path+ ts_id +".m3u8"
 			with open(m3u8_file_path, "r") as m3u8_file:
 				#FileContent = m3u8_file.read()
 				FileasList = m3u8_file.readlines()
