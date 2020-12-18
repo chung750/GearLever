@@ -1,6 +1,7 @@
 from GearLever import gl_variable as gl
 import urllib
 import threading
+import sys
 #參數
 url_ts = gl.get_value('url_ts') #下載網址
 ts_id = gl.get_value('ts_id') #下載分割檔ID
