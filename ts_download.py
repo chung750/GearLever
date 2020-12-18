@@ -53,6 +53,7 @@ def doDownloadTs():
 #建立並執行多執行緒 
 def startThreading(num, threads):
 	try:
+		threads.clear() #清空list
 		for i in range(num):
 			threads.append(threading.Thread(target = doDownloadTs))
 			threads[i].start()
