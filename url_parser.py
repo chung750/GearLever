@@ -30,23 +30,23 @@ def doParser(url):
 		file_name = soup_jable.find("meta",  property="og:title")["content"]
 		#url轉換
 		ts_id = url_m3u8[:-5].split('/')[-1]
-		print('[影片番號: '+ video_id +']')
-		print('[影片名稱: '+ file_name +']')
-		print('[m3u8檔url: '+ url_m3u8 +']')
-		print('[分割檔ID:'+ ts_id +']')
+		print('[Info] 影片番號: '+ video_id )
+		print('[Info] 影片名稱: '+ file_name)
+		print('[Info] m3u8檔url: '+ url_m3u8)
+		print('[Info] 分割檔ID:'+ ts_id)
 		return video_id, file_name, url_m3u8, ts_id
 	except Exception as e:
-		print("網頁資訊擷取失敗!")
+		print("[Error] 網頁資訊擷取失敗!")
 		print(e)
 		
-def doDownload(url_m3u8, ts_id): 
+def doDownload(url_m3u8, ts_id, download_path): 
 	try:
 		try:
 			#下載m3u8檔
-			urllib.request.urlretrieve(url_m3u8,ts_id+".m3u8")
-			print('\nm3u8下載完成!')
+			urllib.request.urlretrieve(url_m3u8, download_path+ts_id+".m3u8")
+			print('[Info] nm3u8下載完成!')
 		except Exception as e:
-			print("m3u8下載失敗!")
+			print("[Error] m3u8下載失敗!")
 			print(e)
 		try:
 			#從.m3u8抓取id_inits、partition_total_size
@@ -56,35 +56,36 @@ def doDownload(url_m3u8, ts_id):
 				FileasList = m3u8_file.readlines()
 				id_inits = FileasList[4].split('"')[1][:-3]
 				partition_total_size = int(FileasList[-2][len(ts_id):-4])+1
-				print('[分割檔總數:'+ str(partition_total_size) +']')
-				print('[開頭檔ID:'+ id_inits +']')
+				print('[Info] 分割檔總數:'+ str(partition_total_size))
+				print('[Info] 開頭檔ID:'+ id_inits)
 		except IOError as e1:
 			print(e1)
 		except Exception as e:
-			print(ts_id +".m3u8讀取失敗!")
+			print("[Error] "+ts_id +".m3u8讀取失敗!")
 			print(e)
 		try:
 			url_ts = url_m3u8[:-5].strip(url_m3u8[:-5].split('/')[-1])
 			url_inits = url_ts + id_inits + '.ts'
-			print('[ts下載檔url:'+ url_ts +']')
-			print('[開頭檔url:'+ url_inits +']')
+			print('[Info] ts下載檔url:'+ url_ts )
+			print('[Info] 開頭檔url:'+ url_inits)
 			#下載開頭檔
-			urllib.request.urlretrieve(url_inits, id_inits+".ts")
-			print('\n開頭檔下載完成!')
+			urllib.request.urlretrieve(url_inits, download_path+id_inits+".ts")
+			print('[Info] 開頭檔下載完成!')
 		except Exception as e:
-			print("開頭檔下載失敗!")
+			print("[Error] 開頭檔下載失敗!")
 			print(e)	
 		return partition_total_size, id_inits, url_ts, url_inits
 	except :
-		print("檔案下載失敗!")
+		print("[Error] 檔案下載失敗!")
 
-def Start(args_1):
+def start(args_1, args_2):
 	try:
 		gl._init()
 		#輸入要處理的影片網址
 		url = args_1
+		download_path = args_2
 		#擷取url資訊
-		print("開始進行網址解析...")
+		print("[Info] 開始進行網址解析...")
 		result = doParser(url)
 		gl.set_value('video_id', result[0])
 		gl.set_value('file_name', result[1])
@@ -96,8 +97,8 @@ def Start(args_1):
 		url_m3u8 = result[2]
 		ts_id = result[3]
 		'''
-		#下m3u8&開頭檔
-		result_2 = doDownload(gl.get_value('url_m3u8'), gl.get_value('ts_id'))
+		#下載m3u8&開頭檔
+		result_2 = doDownload(gl.get_value('url_m3u8'), gl.get_value('ts_id'), download_path)
 		gl.set_value('partition_total_size', result_2[0])
 		gl.set_value('id_inits', result_2[1])
 		gl.set_value('url_ts', result_2[2])
@@ -109,7 +110,7 @@ def Start(args_1):
 		url_inits  = result_2[3]
 		'''
 	except :
-		print("網址解析失敗!")
+		print("[Error] 網址解析失敗!")
 		
 def MainArgs():
 	try:
@@ -121,7 +122,7 @@ def MainArgs():
 		#輸入要處理的影片網址
 		url = args.url
 		#擷取url資訊
-		print("開始進行網址解析...")
+		print("[Info] 開始進行網址解析...")
 		result = doParser(url)
 		gl.set_value('video_id', result[0])
 		gl.set_value('file_name', result[1])
@@ -147,7 +148,7 @@ def MainArgs():
 		'''
 	except Exception as e:
 		print(e)
-		print("網址解析失敗!")	
+		print("[Error] 網址解析失敗!")	
 if __name__ == '__main__':		
 	MainArgs()
 
