@@ -238,8 +238,8 @@ def restart(thread_num, path):
 			print('[Info] 共花費'+str(time.strftime('%M分%S秒', time.localtime(timeelapsed))))
 			restart(thread_num, path)
 		except Exception as e:
-		print(e)
-		print("[Error] 補下載失敗!")
+			print(e)
+			print("[Error] 補下載失敗!")
 	else: #進行下一階段
 		try:
 			#nfo產生器
