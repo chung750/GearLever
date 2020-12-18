@@ -96,11 +96,12 @@ def start(url, thread_num, path):
 		gl.set_value('id_inits', result_2[1])
 		gl.set_value('url_ts', result_2[2])
 		gl.set_value('url_inits', result_2[3])
-		
-		#開始分割檔的下載
-		ts_download.start(thread_num, path)
 	except :
-		print("[Error] 網址解析失敗!")
+		print("[Error] 網址解析失敗!")	
+
+	#開始分割檔的下載
+	ts_download.start(thread_num, path)
+	
 		
 def MainArgs():
 	try:

@@ -1,5 +1,7 @@
 from GearLever import gl_variable as gl
 from GearLever import search_files
+from GearLever import suppress_video
+from GearLever import nfo_fetcher as nf
 import urllib
 import threading
 import sys
@@ -221,8 +223,8 @@ def restart(thread_num, path):
 	download_path = path
 	#查看是否有缺漏
 	result = search_files.doSearch(ts_id, partition_total_size, path)
-	try:
-		if result:
+	if result:	
+		try:
 			#開始執行補下載
 			print('[Info] 開始進行分割檔的補下載...')
 			starttime = time.time() #開始時間
@@ -235,10 +237,20 @@ def restart(thread_num, path):
 			timeelapsed = time.time() - starttime #總共下載時間
 			print('[Info] 共花費'+str(time.strftime('%M分%S秒', time.localtime(timeelapsed))))
 			restart(thread_num, path)
-
-	except Exception as e:
+		except Exception as e:
 		print(e)
 		print("[Error] 補下載失敗!")
+	else: #進行下一階段
+		try:
+			#nfo產生器
+			file_name = gl_variable.get_value('file_name')
+			video_id = gl_variable.get_value('video_id')
+			output_path = nf.Start(file_name, video_id)
+			#影片壓制
+			if output_path:
+				suppress_video(file_name, video_id, path, output_path)
+		except Exception as e:
+			print(e)
 
 #if __name__ == '__main__':		
 #	main()		

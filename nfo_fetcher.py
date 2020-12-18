@@ -29,98 +29,98 @@ def NfoProcedure(file_name, video_id):
 			try:
 				nfo_title = soup_javbus.title.string
 			except:
-				print('Error: nfo_title')
+				print('[Error] cannot get: nfo_title')
 				nfo_title = ''
 			try:	
 				nfo_studio = dict_info['製作商']
 			except:
-				print('Error: nfo_studio')
+				print('[Error] cannot get: nfo_studio')
 				nfo_studio = ''
 			try:
 				nfo_year = dict_info['發行日期'].strip()[0:4]  
 			except:
-				print('Error: nfo_year')
+				print('[Error] cannot get: nfo_year')
 				nfo_year = ''
 			try:
 				nfo_outline = soup_jable.find("meta", property="og:title")["content"]
 			except:
-				print('Error: nfo_outline')
+				print('[Error] cannot get: nfo_outline')
 				nfo_outline = ''
 			try:
 				nfo_plot = nfo_outline
 			except:
-				print('Error: nfo_plot')
+				print('[Error] cannot get: nfo_plot')
 				nfo_plot = ''
 			try:
 				nfo_runtime = dict_info['長度']
 			except:
-				print('Error: nfo_runtime')
+				print('[Error] cannot get: nfo_runtime')
 				nfo_runtime = ''
 			try:
 				nfo_director = dict_info['發行商'] 
 			except:
-				print('Error: nfo_director')
+				print('[Error] cannot get: nfo_director')
 				nfo_director = ''
 			try:
 				nfo_poster = video_id + '-poster.jpg'
 			except:
-				print('Error: nfo_poster')
+				print('[Error] cannot get: nfo_poster')
 				nfo_poster = ''
 			try:
 				nfo_thumb = video_id + '-thumb.jpg'
 			except:
-				print('Error: nfo_thumb')
+				print('[Error] cannot get: nfo_thumb')
 				nfo_thumb = ''
 			try:
 				nfo_fanart = video_id + '-fanart.jpg'
 			except:
-				print('Error: nfo_fanart')
+				print('[Error] cannot get: nfo_fanart')
 				nfo_fanart = ''
 			try:
 				nfo_name = [k.string for k in soup_javbus.select("div.container div.info div.star-name")]
 				if (len(nfo_name) == 0): nfo_name = ['素人']
 			except:
-				print('Error: nfo_name')
+				print('[Error] cannot get: nfo_name')
 				nfo_name = ''
 			try:
 				nfo_maker = nfo_studio  
 			except:
-				print('Error: nfo_maker')
+				print('[Error] cannot get: nfo_maker')
 				nfo_maker = ''
 			try:
 				nfo_tag = [j.replace(' ','') for j in list(filter(None,[g.string for g in soup_javbus.select("div.container div.info span.genre")]))] + [h.string.replace(' ','') for h in soup_jable.select("h5.tags a")]
 			except:
-				print('Error: nfo_tag')
+				print('[Error] cannot get: nfo_tag')
 				nfo_tag = ''
 			try:
 				nfo_genre = nfo_tag 
 			except:
-				print('Error: nfo_genre')
+				print('[Error] cannot get: nfo_genre')
 				nfo_genre = ''
 			try:
 				nfo_num = dict_info['識別碼']
 			except:
-				print('Error: nfo_num')
+				print('[Error] cannot get: nfo_num')
 				nfo_num = ''
 			try:
 				nfo_release = dict_info['發行日期']
 			except:
-				print('Error: nfo_release')
+				print('[Error] cannot get: nfo_release')
 				nfo_release = ''
 			try:
 				nfo_premiered = nfo_release
 			except:
-				print('Error: nfo_premiered')
+				print('[Error] cannot get: nfo_premiered')
 				nfo_premiered = ''
 			try:
 				nfo_cover = soup_javbus.select("div.container div.screencap a")[0].get("href")
 			except:
-				print('Error: nfo_cover')
+				print('[Error] cannot get: nfo_cover')
 				nfo_cover = ''
 			try:
 				nfo_website = javbus_url
 			except:
-				print('Error: nfo_website')
+				print('[Error] cannot get: nfo_website')
 				nfo_website = ''
 			#整合字串
 			text_up = '<?xml version="1.0" encoding="UTF-8" ?>\n<movie>\n <title>'+nfo_title+'</title>\n  <set>\n  </set>\n  <studio>'+nfo_studio+'</studio>\n  <year>'+nfo_year+'</year>\n  <outline>'+nfo_outline+'</outline>\n  <plot>'+nfo_plot+'</plot>\n  <runtime>'+nfo_runtime+'</runtime>\n  <director>'+nfo_director+'</director>\n  <poster>'+nfo_poster+'</poster>\n  <thumb>'+nfo_thumb+'/thumb>\n  <fanart>'+nfo_fanart+'</fanart>'
@@ -131,9 +131,9 @@ def NfoProcedure(file_name, video_id):
 			ImageDownload(file_name, video_id,  nfo_cover, soup_jable.find("meta", property="og:image")["content"])
 		except 	Exception as e2:	
 			print(e2)
-			print("字串擷取失敗!")
+			print("[Error] 字串擷取失敗!")
 	except : 
-		print("網頁資訊擷取失敗!")
+		print("[Error] 網頁資訊擷取失敗!")
 		
 ##寫入.nfo
 def WriteNfo(file_name, video_id, text_up, text_middle, text_down, nfo_name, nfo_tag, nfo_genre):
@@ -152,13 +152,13 @@ def WriteNfo(file_name, video_id, text_up, text_middle, text_down, nfo_name, nfo
 			for nfo_genre_fetch in nfo_genre:
 			  print("  <genre>"+nfo_genre_fetch+"</genre>", file=code)
 			print(text_down, file=code)
-		print(video_id+".nfo 儲存完成!")
+		print("[Info] "+video_id+".nfo 儲存完成!")
 		#print(open("/content/"+file_name+"/"+video_id+".nfo",mode="r").read())		
 	except Exception as e:
-		print(video_id+".nfo 寫入失敗!")
+		print("[Error] "+video_id+".nfo 寫入失敗!")
 		print(e)
 	except IOError as e1:
-		print(video_id+".nfo 寫入失敗!")
+		print("[Error] "+video_id+".nfo 寫入失敗!")
 		print(e1) 
 
 ##存入圖片
@@ -166,29 +166,29 @@ def ImageDownload(file_name, video_id,  url_1, url_2):
 	try:
 		cover = requests.get(url_1).content
 	except Exception:
-		print('JavBus找不到圖片，改以Jable尋找..')
+		print('[Warning] JavBus找不到圖片，改以Jable尋找..')
 		try:
 			cover = requests.get(url_2).content
 		except Exception: 
-			print('圖片下載失敗!')
+			print('[Error] 圖片下載失敗!')
 	try: #儲存下載的圖片
 		with open("/content/"+file_name+"/"+video_id+"-fanart.jpg", "wb") as code:
 			code.write(cover)
-		print(video_id+"-fanart.jpg 儲存完成!")	 	
+		print("[Info] "+video_id+"-fanart.jpg 儲存完成!")	 	
 		shutil.copyfile("/content/"+file_name+"/"+video_id+"-fanart.jpg", "/content/"+file_name+"/"+video_id+"-thumb.jpg")
 		#os.copy("cp '/content/"+file_name+"/"+video_id+"-fanart.jpg' '/content/"+file_name+"/"+video_id+"-thumb.jpg'")
-		print(video_id+"-thumb.jpg 儲存完成!")	
+		print("[Info] "+video_id+"-thumb.jpg 儲存完成!")	
 		try: #圖片切割
 			img = Image.open("/content/"+file_name+"/"+video_id+"-fanart.jpg")
 			#img.save("/content/"+file_name+"/"+video_id+"-thumb.jpg")
 			img2 = img.crop((421, 0, 800, 538))
 			img2.save("/content/"+file_name+"/"+video_id+"-poster.jpg")
-			print(video_id+"-poster.jpg 儲存完成!")
+			print("[Info] "+video_id+"-poster.jpg 儲存完成!")
 		except Exception as e2:
 			print(e2)
-			print('圖片切割失敗!') 
+			print('[Error] 圖片切割失敗!') 
 	except Exception as e1:
-		print('圖片儲存失敗!')
+		print('[Error] 圖片儲存失敗!')
 		print(e1) 
 
 ##建立資料夾  
@@ -196,15 +196,15 @@ def CreatFolder(folder):
 	if not os.path.exists(folder):  # 新建failed文件夹
 		try:
 			os.makedirs(folder)
-			print("資料夾建立:"+folder)
+			print("[Info] 資料夾建立:"+folder)
 		except:
-			print("[-]failed!can not be make folder\n")
+			print("[Error] failed! can not be make folder")
 	return   
   
 #main
 def MainArgs():
 	try:
-		print("開始進行元數據擷取...")
+		print("[Info] 開始進行元數據擷取...")
 		parser = argparse.ArgumentParser()
 		parser.add_argument("file_name", help="Write the file name on here")
 		parser.add_argument("video_id", help="Write the video id on here")
@@ -218,23 +218,24 @@ def MainArgs():
 		NfoProcedure(file_name, video_id)
 	except Exception as e:
 		print(e)
-		print("元數據擷取失敗!")
+		print("[Error] 元數據擷取失敗!")
 
 #main 2
 def Start(args_1, args_2):
 	try:
-		print("開始進行元數據擷取...")
+		print("[Info] 開始進行元數據擷取...")
 		file_name = args_1
 		if (len(file_name) > 70) : file_name = file_name[:-(len(file_name)-70)] #避免檔名過長
 		video_id = args_2	
 		#建立資料夾
-		path = "/content/" + file_name 
+		path = "/content/" + file_name +"/"
 		CreatFolder(path)
 		#nfo
 		NfoProcedure(file_name, video_id)
+		return path
 	except Exception as e:
 		print(e)
-		print("元數據擷取失敗!")		
+		print("[Error] 元數據擷取失敗!")		
 		
 if __name__ == '__main__':		
 	MainArgs()
