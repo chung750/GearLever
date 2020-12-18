@@ -1,5 +1,6 @@
 from GearLever import gl_variable as gl
 import subprocess
+import shlex
 #壓制
 def start(file_name, ts_id, input_path, output_path):
 	try:
