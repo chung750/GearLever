@@ -78,10 +78,10 @@ def ThreadingController(threads, target_rate, duration):
 			else: 
 				record_download_num.append(downloaded_num - last_downloaded_num)
 			last_downloaded_num = downloaded_num
-        except Exception as e:
+		except Exception as e:
 			print(e)
 			print("[Error] 紀錄下載進度失敗!")
-        try:
+		try:
 			if (len(downloaded_num_record_list)%5 == 0): #每5次控管階段QOS一次
 				global qos_waiting_time
 				download_rate = round(sum(record_download_num[-5:])/5, 2) #計算最近的25秒的平均下載數量
