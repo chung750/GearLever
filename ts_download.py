@@ -25,22 +25,24 @@ current_partition = 0 #紀錄目前下載第幾分割檔
 #主要下載job
 def doDownloadTs():
 	try:
+		global thread_switch
 		#判斷多執行緒開關是否開啟
 		if thread_switch == True:
 			global current_partition
 			global downloaded_num
-			download_partition = current_partition
-			current_partition = current_partition + 1 
 			#判斷欲下載的分割檔ID是否超過最後一個
-			if(download_partition <= int(partition_total_size)):
+			if(current_partition <= int(partition_total_size)):
+				download_partition = current_partition
+				current_partition = current_partition + 1 
 				time.sleep(qos_waiting_time) #此暫停時間用於流量控管
 				url_go = url_ts+ts_id+str(download_partition)+'.ts'
 				urllib.request.urlretrieve(url_go,ts_id+str(download_partition)+'.ts')
 				downloaded_num = downloaded_num+1
 				nowtime = str(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()+28800)))
-				print(">>>>> ["+nowtime+"]下載進度: "+str(downloaded_num)+"/"+str(partition_total_size)+" (多執行緒總數:"+str(threading.active_count()-system_threads_num)+")")
+				print(">>>>> ["+nowtime+"] 下載進度: "+str(downloaded_num)+"/"+str(partition_total_size)+" (多執行緒總數:"+str(threading.active_count()-system_threads_num)+")")
 				doDownloadTs() #下載完畢後執行下一個下載
 			else:
+				thread_switch = False
 				print("[Info] 終止執行緒:"+threading.currentThread().name)
 		else:
 			print("[Info] 終止執行緒:"+threading.currentThread().name)
@@ -88,35 +90,35 @@ def ThreadingController(threads, target_rate, duration):
 				download_rate = round(sum(downloaded_num_record_list[-5:])/5, 2) #計算最近的25秒的平均下載數量
 				#平均下載速率低於target_rate-3
 				if (download_rate < target_rate-3): 
-					if (qos_waiting_time > 0): #限制延遲時間不得低於0
+					if (qos_waiting_time > 1): #限制延遲時間不得低於0
 						qos_waiting_time = qos_waiting_time - 2
-						print("[Info] 流量管制: 目前平均下載速度("+str(download_rate)+") 降低延遲時間("+str(qos_waiting_time)+"s)")
+						print("[Info] 流量管制: 目前平均下載速度("+str(download_rate)+"/"+duration+"s) 降低延遲時間("+str(qos_waiting_time)+"s)")
 					else: 
-						print("[Info] 流量管制: 目前平均下載速度("+str(download_rate)+") 目前延遲時間("+str(qos_waiting_time)+"s)")
+						print("[Info] 流量管制: 目前平均下載速度("+str(download_rate)+"/"+duration+"s) 目前延遲時間("+str(qos_waiting_time)+"s)")
 				#平均下載速率低於target_rate-3 ~ target_rate-1
 				elif (download_rate >= target_rate-3 and download_rate < target_rate-1):
 					if (qos_waiting_time > 0): #限制延遲時間不得低於0
 						qos_waiting_time = qos_waiting_time - 1
-						print("[Info] 流量管制: 目前平均下載速度("+str(download_rate)+") 降低延遲時間("+str(qos_waiting_time)+"s)")
+						print("[Info] 流量管制: 目前平均下載速度("+str(download_rate)+"/"+duration+"s) 降低延遲時間("+str(qos_waiting_time)+"s)")
 					else: 
-						print("[Info] 流量管制: 目前平均下載速度("+str(download_rate)+") 目前延遲時間("+str(qos_waiting_time)+"s)")
+						print("[Info] 流量管制: 目前平均下載速度("+str(download_rate)+"/"+duration+"s) 目前延遲時間("+str(qos_waiting_time)+"s)")
 				#平均下載速率高於target_rate+1 ~ target_rate+3		
 				elif (download_rate >= target_rate+1 and download_rate < target_rate+3):
 					if (qos_waiting_time < 6): #限制延遲時間不得超過6
 						qos_waiting_time = qos_waiting_time + 1
-						print("[Info] 流量管制: 目前平均下載速度("+str(download_rate)+") 加速延遲時間("+str(qos_waiting_time)+"s)")
+						print("[Info] 流量管制: 目前平均下載速度("+str(download_rate)+"/"+duration+"s) 加速延遲時間("+str(qos_waiting_time)+"s)")
 					else: 
-						print("[Info] 流量管制: 目前平均下載速度("+str(download_rate)+") 目前延遲時間("+str(qos_waiting_time)+"s)")
+						print("[Info] 流量管制: 目前平均下載速度("+str(download_rate)+"/"+duration+"s) 目前延遲時間("+str(qos_waiting_time)+"s)")
 				#平均下載速率高於target_rate+3		
 				elif (download_rate >= target_rate+3):
-					if (qos_waiting_time < 6): #限制延遲時間不得超過6
+					if (qos_waiting_time < 5): #限制延遲時間不得超過6
 						qos_waiting_time = qos_waiting_time + 2
-						print("[Info] 流量管制: 目前平均下載速度("+str(download_rate)+") 加速延遲時間("+str(qos_waiting_time)+"s)")
+						print("[Info] 流量管制: 目前平均下載速度("+str(download_rate)+"/"+duration+"s) 加速延遲時間("+str(qos_waiting_time)+"s)")
 					else: 
-						print("[Info] 流量管制: 目前平均下載速度("+str(download_rate)+") 目前延遲時間("+str(qos_waiting_time)+"s)")
+						print("[Info] 流量管制: 目前平均下載速度("+str(download_rate)+"/"+duration+"s) 目前延遲時間("+str(qos_waiting_time)+"s)")
 				#平均下載速率符合預期
 				else:    
-					print("[Info] 流量管制: 目前平均下載速度("+str(download_rate)+") 目前延遲時間("+str(qos_waiting_time)+"s)")
+					print("[Info] 流量管制: 目前平均下載速度("+str(download_rate)+"/"+duration+"s) 目前延遲時間("+str(qos_waiting_time)+"s)")
 		except Exception as e:
 			print(e)
 			print("[Error] 流量管制失敗!")
