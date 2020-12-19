@@ -53,7 +53,10 @@ def doDownload(url_m3u8, ts_id, download_path):
 			with open(m3u8_file_path, "r") as m3u8_file:
 				#FileContent = m3u8_file.read()
 				FileasList = m3u8_file.readlines()
-				id_inits = FileasList[4].split('"')[1][:-3]
+				try:
+					id_inits = FileasList[4].split('"')[1][:-3]
+				except:
+					id_inits = ''
 				partition_total_size = int(FileasList[-2][len(ts_id):-4])+1
 				print('[Info] 分割檔總數:'+ str(partition_total_size))
 				print('[Info] 開頭檔ID:'+ id_inits)
@@ -64,15 +67,20 @@ def doDownload(url_m3u8, ts_id, download_path):
 			print(e)
 		try:
 			url_ts = url_m3u8[:-5].strip(url_m3u8[:-5].split('/')[-1])
-			url_inits = url_ts + id_inits + '.ts'
-			print('[Info] ts下載檔url:'+ url_ts )
-			print('[Info] 開頭檔url:'+ url_inits)
-			#下載開頭檔
-			urllib.request.urlretrieve(url_inits, download_path+id_inits+".ts")
-			print('[Info] 開頭檔下載完成!')
+			if id_inits:
+				try:
+					url_inits = url_ts + id_inits + '.ts'
+					print('[Info] ts下載檔url:'+ url_ts )
+					print('[Info] 開頭檔url:'+ url_inits)
+					#下載開頭檔
+					urllib.request.urlretrieve(url_inits, download_path+id_inits+".ts")
+					print('[Info] 開頭檔下載完成!')
+				except Exception as e:
+					print(e)
+					print("[Error] 開頭檔下載失敗!")
+			else : url_inits = ''
 		except Exception as e:
-			print("[Error] 開頭檔下載失敗!")
-			print(e)	
+			print(e)		
 		return partition_total_size, id_inits, url_ts, url_inits
 	except :
 		print("[Error] 檔案下載失敗!")
@@ -99,7 +107,7 @@ def start(url, thread_num, path, path_drive):
 		gl.set_value('url_inits', result_2[3])
 	except :
 		print("[Error] 網址解析失敗!")	
-
+		return
 	#開始分割檔的下載
 	ts_download.start(thread_num, path, path_drive)
 	
