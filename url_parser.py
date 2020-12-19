@@ -109,7 +109,8 @@ def start(url, thread_num, path, path_drive):
 		print("[Error] 網址解析失敗!")	
 		return
 	#開始分割檔的下載
-	ts_download.start(thread_num, path, path_drive)
+	if ts_download.start(thread_num, path, path_drive):
+		return True
 	
 		
 def MainArgs():

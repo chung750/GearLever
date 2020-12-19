@@ -207,8 +207,8 @@ def start(thread_num, path, path_drive):
 		print("[Info] 下載完成!")
 		timeelapsed = time.time() - starttime #總共下載時間
 		print('[Info] 共花費'+str(time.strftime('%M分%S秒', time.localtime(timeelapsed))))
-		restart(thread_num, path, path_drive)
-		
+		if restart(thread_num, path, path_drive):
+			return True
 	except Exception as e:
 		global thread_switch
 		thread_switch = False
@@ -245,11 +245,12 @@ def restart(thread_num, path, path_drive):
 			file_name = gl.get_value('file_name')
 			video_id = gl.get_value('video_id')
 			output_path = nf.start(file_name, video_id)
-			#影片壓制
 			if output_path:
-				suppress_video.start(file_name, video_id, path, output_path)
-			#轉存雲端
-			clone_drive.start(file_name, video_id, path_drive)
+				#影片壓制
+				if suppress_video.start(file_name, video_id, path, output_path):
+					#轉存雲端
+					if clone_drive.start(file_name, video_id, path_drive):
+						return True
 		except Exception as e:
 			print(e)
 
