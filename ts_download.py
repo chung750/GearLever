@@ -141,7 +141,7 @@ def ThreadingController(threads, target_rate, duration, func, miss_list):
 			try:
 				if (len(downloaded_num_record_list)%5 == 0): #每5次控管階段QOS一次
 					global qos_waiting_time
-					download_rate = round(sum(downloaded_num_record_list[-5:])/duration, 2) #計算最近的25秒的平均每秒下載數量
+					download_rate = round(sum(downloaded_num_record_list[-5:])/(5*duration), 2) #計算最近的25秒的平均每秒下載數量
 					#平均下載速率 < target_rate*0.5
 					if (download_rate < target_rate*0.5): 
 						qos_waiting_time = qos_waiting_time - 2
