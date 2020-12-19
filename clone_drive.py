@@ -19,7 +19,7 @@ def search_drive(file_name, video_id, file_path):
 	drive_dir = os.listdir(file_path)
 	check = [False, False, False, False, False, ]
 	#確認是否存在資料夾
-	file_name = [i for i in drive_dir if video_id.upper() in i]
+	file_name = [i for i in drive_dir if video_id.upper() in i][0]
 	if file_name:
 		subdir_path = file_path+file_name
 		drive_subdir = os.listdir(subdir_path)
