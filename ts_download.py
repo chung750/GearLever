@@ -235,7 +235,7 @@ def restart(thread_num, path, path_drive):
 			print("[Info] 補下載完成!")
 			timeelapsed = time.time() - starttime #總共下載時間
 			print('[Info] 共花費'+str(time.strftime('%M分%S秒', time.localtime(timeelapsed))))
-			restart(thread_num, path)
+			restart(thread_num, path, path_drive)
 		except Exception as e:
 			print(e)
 			print("[Error] 補下載失敗!")
@@ -249,7 +249,7 @@ def restart(thread_num, path, path_drive):
 			if output_path:
 				suppress_video.start(file_name, video_id, path, output_path)
 			#轉存雲端
-				clone_drive.start(file_name, video_id, path_drive)
+			clone_drive.start(file_name, video_id, path_drive)
 		except Exception as e:
 			print(e)
 

@@ -12,6 +12,8 @@ def start(file_name, ts_id, input_path, output_path):
 		process = subprocess.Popen(shlex.split(command), stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 		for line in process.stdout.readlines():
 			print(line[2:-3)
+		return True
 	except Exception as e:
 		print(e)
 		print("[Error] 壓制影片失敗!")
+		return False
