@@ -2,6 +2,7 @@ from GearLever import gl_variable as gl
 from GearLever import search_files
 from GearLever import suppress_video
 from GearLever import nfo_fetcher as nf
+from GearLever import clone_drive
 import urllib
 import threading
 import sys
@@ -140,44 +141,35 @@ def ThreadingController(threads, target_rate, duration, func, miss_list):
 			try:
 				if (len(downloaded_num_record_list)%5 == 0): #每5次控管階段QOS一次
 					global qos_waiting_time
-					download_rate = round(sum(downloaded_num_record_list[-5:])/5, 2) #計算最近的25秒的平均下載數量
-					#平均下載速率低於target_rate-3
-					if (download_rate < target_rate-3): 
-						if (qos_waiting_time > 1): #限制延遲時間不得低於0
-							qos_waiting_time = qos_waiting_time - 2
-							print("[Info] 流量管制: 目前平均下載速度("+str(download_rate)+"/"+str(duration)+"s) 降低延遲時間("+str(qos_waiting_time)+"s)")
-						elif  (qos_waiting_time == 1):  #限制延遲時間不得低於0
-							qos_waiting_time = qos_waiting_time - 1
-							print("[Info] 流量管制: 目前平均下載速度("+str(download_rate)+"/"+str(duration)+"s) 降低延遲時間("+str(qos_waiting_time)+"s)")
-						else: 
-							print("[Info] 流量管制: 目前平均下載速度("+str(download_rate)+"/"+str(duration)+"s) 維持延遲時間("+str(qos_waiting_time)+"s)")
-					#平均下載速率低於target_rate-3 ~ target_rate-1
-					elif (download_rate >= target_rate-3 and download_rate < target_rate-1):
-						if (qos_waiting_time > 0): #限制延遲時間不得低於0
-							qos_waiting_time = qos_waiting_time - 1
-							print("[Info] 流量管制: 目前平均下載速度("+str(download_rate)+"/"+str(duration)+"s) 降低延遲時間("+str(qos_waiting_time)+"s)")
-						else: 
-							print("[Info] 流量管制: 目前平均下載速度("+str(download_rate)+"/"+str(duration)+"s) 維持延遲時間("+str(qos_waiting_time)+"s)")
-					#平均下載速率高於target_rate+1 ~ target_rate+3		
-					elif (download_rate >= target_rate+1 and download_rate < target_rate+3):
-						if (qos_waiting_time < 6): #限制延遲時間不得超過6
-							qos_waiting_time = qos_waiting_time + 1
-							print("[Info] 流量管制: 目前平均下載速度("+str(download_rate)+"/"+str(duration)+"s) 加速延遲時間("+str(qos_waiting_time)+"s)")
-						else: 
-							print("[Info] 流量管制: 目前平均下載速度("+str(download_rate)+"/"+str(duration)+"s) 維持延遲時間("+str(qos_waiting_time)+"s)")
-					#平均下載速率高於target_rate+3		
-					elif (download_rate >= target_rate+3):
-						if (qos_waiting_time < 5): #限制延遲時間不得超過6
-							qos_waiting_time = qos_waiting_time + 2
-							print("[Info] 流量管制: 目前平均下載速度("+str(download_rate)+"/"+str(duration)+"s) 加速延遲時間("+str(qos_waiting_time)+"s)")
-						elif  (qos_waiting_time == 5): #限制延遲時間不得超過6
-							qos_waiting_time = qos_waiting_time + 1
-							print("[Info] 流量管制: 目前平均下載速度("+str(download_rate)+"/"+str(duration)+"s) 加速延遲時間("+str(qos_waiting_time)+"s)")
-						else: 
-							print("[Info] 流量管制: 目前平均下載速度("+str(download_rate)+"/"+str(duration)+"s) 維持延遲時間("+str(qos_waiting_time)+"s)")
-					#平均下載速率符合預期
-					else:    
-						print("[Info] 流量管制: 目前平均下載速度("+str(download_rate)+"/"+str(duration)+"s) 維持延遲時間("+str(qos_waiting_time)+"s)")
+					download_rate = round(sum(downloaded_num_record_list[-5:])/5*duration, 2) #計算最近的25秒的平均每秒下載數量
+					#平均下載速率 < target_rate*0.5
+					if (download_rate < target_rate*0.5): 
+						qos_waiting_time = qos_waiting_time - 2
+					#target_rate*0.5 <= 平均下載速率低於 < target_rate*0.625
+					elif (download_rate >= target_rate*0.5 and download_rate < target_rate*0.625):
+						qos_waiting_time = qos_waiting_time - 1.5
+					#target_rate*0.625 <= 平均下載速率低於 < target_rate*0.75
+					elif (download_rate >= target_rate*0.625 and download_rate < target_rate*0.75):
+						qos_waiting_time = qos_waiting_time - 1
+					#target_rate*0.75 <= 平均下載速率低於 < target_rate*0.875
+					elif (download_rate >= target_rate*0.75 and download_rate < target_rate*0.875):
+						qos_waiting_time = qos_waiting_time - 0.5
+					#target_rate*1.125 <= 平均下載速率低於 < target_rate*1.25
+					elif (download_rate >= target_rate*1.125 and download_rate < target_rate*1.25):
+						qos_waiting_time = qos_waiting_time + 0.5
+					#target_rate*1.25 <= 平均下載速率低於 < target_rate*1.375
+					elif (download_rate >= target_rate*1.25 and download_rate < target_rate*1.375):
+						qos_waiting_time = qos_waiting_time + 1
+					#target_rate*1.375 <= 平均下載速率低於 < target_rate*1.5
+					elif (download_rate >= target_rate*1.375 and download_rate < target_rate*1.5):
+						qos_waiting_time = qos_waiting_time + 1.5
+					#target_rate*1.5 <= 平均下載速率
+					elif (download_rate >= target_rate*1.5):
+						qos_waiting_time = qos_waiting_time + 2
+					#qos_waiting_time值域: 0~6
+					if qos_waiting_time < 0: qos_waiting_time = 0
+					if qos_waiting_time > 6: qos_waiting_time = 6
+					print("[Info] 流量控管: 目前平均下載速度("+str(download_rate)+"/"+str(duration)+"s) 延遲時間("+str(qos_waiting_time)+"s) 預估剩餘時間("+str(time.strftime('%M分%S秒', time.localtime(round((partition_total_size-downloaded_num)/download_rate, 0))))+")")
 			except Exception as e:
 				print(e)
 				print("[Error] 流量管制失敗!")
@@ -195,7 +187,7 @@ def joinThreading(num, threads):
 	print("[Info] 多執行緒已全部終止!")
 	
 #main
-def start(thread_num, path):
+def start(thread_num, path, path_drive):
 	try:
 		#初始化參數
 		initializeParameter()
@@ -209,20 +201,20 @@ def start(thread_num, path):
 		starttime = time.time() #開始時間
 		startThreading(thread_num, threads, doDownloadTs, [])
 		#每5秒管控一次多執行緒，流量控制在下載速率為8
-		ThreadingController(threads, 8, 5, doDownloadTs, [])
+		ThreadingController(threads, 1.6, 5, doDownloadTs, [])
 		#堵塞多執行緒結束
 		joinThreading(thread_num, threads)
 		print("[Info] 下載完成!")
 		timeelapsed = time.time() - starttime #總共下載時間
 		print('[Info] 共花費'+str(time.strftime('%M分%S秒', time.localtime(timeelapsed))))
-		restart(thread_num, path)
+		restart(thread_num, path, path_drive)
 		
 	except Exception as e:
 		global thread_switch
 		thread_switch = False
 		print(e)
 
-def restart(thread_num, path):
+def restart(thread_num, path, path_drive):
 	#初始化參數
 	initializeParameter()
 	#設定下載路徑
@@ -237,7 +229,7 @@ def restart(thread_num, path):
 			starttime = time.time() #開始時間
 			startThreading(thread_num, threads, doReDownloadTs, result)
 			#每5秒管控一次多執行緒，流量控制在下載速率為8
-			ThreadingController(threads, 8, 5, doReDownloadTs, result)
+			ThreadingController(threads, 1.6, 5, doReDownloadTs, result)
 			#堵塞多執行緒結束
 			joinThreading(thread_num, threads)
 			print("[Info] 補下載完成!")
@@ -256,6 +248,8 @@ def restart(thread_num, path):
 			#影片壓制
 			if output_path:
 				suppress_video.start(file_name, video_id, path, output_path)
+			#轉存雲端
+				clone_drive(file_name, video_id, path_drive)
 		except Exception as e:
 			print(e)
 

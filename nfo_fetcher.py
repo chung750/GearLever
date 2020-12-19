@@ -225,7 +225,6 @@ def start(args_1, args_2):
 	try:
 		print("[Info] 開始進行元數據擷取...")
 		file_name = args_1
-		if (len(file_name) > 70) : file_name = file_name[:-(len(file_name)-70)] #避免檔名過長
 		video_id = args_2	
 		#建立資料夾
 		path = "/content/" + file_name +"/"

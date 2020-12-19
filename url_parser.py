@@ -26,6 +26,7 @@ def doParser(url):
 		poster_src = [i.get("href") for i in soup_jable.select(poster_selector)][0]
 		url_m3u8 = poster_src
 		file_name = soup_jable.find("meta",  property="og:title")["content"]
+		if (len(file_name) > 70) : file_name = file_name[:-(len(file_name)-70)] #避免檔名過長
 		#url轉換
 		ts_id = url_m3u8[:-5].split('/')[-1]
 		print('[Info] 影片番號: '+ video_id )
@@ -76,7 +77,7 @@ def doDownload(url_m3u8, ts_id, download_path):
 	except :
 		print("[Error] 檔案下載失敗!")
 
-def start(url, thread_num, path):
+def start(url, thread_num, path, path_drive):
 	try:
 		gl._init()
 		#輸入要處理的影片網址
@@ -100,7 +101,7 @@ def start(url, thread_num, path):
 		print("[Error] 網址解析失敗!")	
 
 	#開始分割檔的下載
-	ts_download.start(thread_num, path)
+	ts_download.start(thread_num, path, path_drive)
 	
 		
 def MainArgs():
