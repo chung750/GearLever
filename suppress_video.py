@@ -11,7 +11,7 @@ def start(file_name, ts_id, input_path, output_path):
 		command = "ffmpeg -i "+ input_path+ts_id +".m3u8 -c copy '"+output_path+ file_name +".mp4'"
 		process = subprocess.Popen(shlex.split(command), stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 		for line in process.stdout.readlines():
-			print(line)
+			print(line[2:-3)
 	except Exception as e:
 		print(e)
 		print("[Error] 壓制影片失敗!")
