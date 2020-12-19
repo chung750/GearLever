@@ -18,7 +18,8 @@ def convert_size(size_bytes):
 def search_drive(file_name, video_id, file_path):
 	drive_dir = os.listdir(file_path)
 	#確認是否存在資料夾
-	if file_name in drive_dir:
+	file_name = [i for i in drive_dir if video_id in drive_dir]
+	if file_name:
 		subdir_path = file_path+file_name
 		drive_subdir = os.listdir(subdir_path)
 		subdir_video_name = file_name+'.mp4'
@@ -27,6 +28,7 @@ def search_drive(file_name, video_id, file_path):
 		subdir_poster_name = video_id+'-poster.jpg'
 		subdir_nfo_name = video_id+'.nfo'
 		#確認各檔案
+		
 		if subdir_video_name in drive_subdir:
 			size = os.stat(subdir_path+'/'+subdir_video_name).st_size
 			print("[Info] "+subdir_video_name+' > '+convert_size(size))
