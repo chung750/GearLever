@@ -169,7 +169,7 @@ def ThreadingController(threads, target_rate, duration, func, miss_list):
 					#qos_waiting_time值域: 0~6
 					if qos_waiting_time < 0: qos_waiting_time = 0
 					if qos_waiting_time > 6: qos_waiting_time = 6
-					print("[Info] 流量控管: 目前平均下載速度("+str(download_rate)+"/s) 延遲時間("+str(qos_waiting_time)+"s) 預估剩餘時間("+str(time.strftime('%M分%S秒', time.localtime(round((partition_total_size-downloaded_num)/download_rate, 0))))+")")
+					print("[Info] 流量控管: 目前平均下載速度("+str(download_rate)+"/s) 延遲時間("+str(qos_waiting_time)+"s) 預估剩餘時間("+str(time.strftime('%H時%M分%S秒', time.localtime(round((partition_total_size-downloaded_num)/download_rate, 0))))+")")
 			except Exception as e:
 				print(e)
 				print("[Error] 流量管制失敗!")
@@ -249,7 +249,7 @@ def restart(thread_num, path, path_drive):
 			if output_path:
 				suppress_video.start(file_name, video_id, path, output_path)
 			#轉存雲端
-				clone_drive(file_name, video_id, path_drive)
+				clone_drive.start(file_name, video_id, path_drive)
 		except Exception as e:
 			print(e)
 
