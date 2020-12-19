@@ -141,7 +141,7 @@ def ThreadingController(threads, target_rate, duration, func, miss_list):
 			try:
 				if (len(downloaded_num_record_list)%5 == 0): #每5次控管階段QOS一次
 					global qos_waiting_time
-					download_rate = round(sum(downloaded_num_record_list[-5:])/5*duration, 2) #計算最近的25秒的平均每秒下載數量
+					download_rate = round(sum(downloaded_num_record_list[-5:])/duration, 2) #計算最近的25秒的平均每秒下載數量
 					#平均下載速率 < target_rate*0.5
 					if (download_rate < target_rate*0.5): 
 						qos_waiting_time = qos_waiting_time - 2
@@ -169,7 +169,7 @@ def ThreadingController(threads, target_rate, duration, func, miss_list):
 					#qos_waiting_time值域: 0~6
 					if qos_waiting_time < 0: qos_waiting_time = 0
 					if qos_waiting_time > 6: qos_waiting_time = 6
-					print("[Info] 流量控管: 目前平均下載速度("+str(download_rate)+"/"+str(duration)+"s) 延遲時間("+str(qos_waiting_time)+"s) 預估剩餘時間("+str(time.strftime('%M分%S秒', time.localtime(round((partition_total_size-downloaded_num)/download_rate, 0))))+")")
+					print("[Info] 流量控管: 目前平均下載速度("+str(download_rate)+"/s) 延遲時間("+str(qos_waiting_time)+"s) 預估剩餘時間("+str(time.strftime('%M分%S秒', time.localtime(round((partition_total_size-downloaded_num)/download_rate, 0))))+")")
 			except Exception as e:
 				print(e)
 				print("[Error] 流量管制失敗!")
