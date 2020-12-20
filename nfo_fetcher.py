@@ -123,7 +123,7 @@ def NfoProcedure(file_name, video_id):
 				print('[Error] cannot get: nfo_website')
 				nfo_website = ''
 			#整合字串
-			text_up = '<?xml version="1.0" encoding="UTF-8" ?>\n<movie>\n <title>'+nfo_title+'</title>\n  <set>\n  </set>\n  <studio>'+nfo_studio+'</studio>\n  <year>'+nfo_year+'</year>\n  <outline>'+nfo_outline+'</outline>\n  <plot>'+nfo_plot+'</plot>\n  <runtime>'+nfo_runtime+'</runtime>\n  <director>'+nfo_director+'</director>\n  <poster>'+nfo_poster+'</poster>\n  <thumb>'+nfo_thumb+'/thumb>\n  <fanart>'+nfo_fanart+'</fanart>'
+			text_up = '<?xml version="1.0" encoding="UTF-8" ?>\n<movie>\n <title>'+nfo_title+'</title>\n  <set>\n  </set>\n  <studio>'+nfo_studio+'</studio>\n  <year>'+nfo_year+'</year>\n  <outline>'+nfo_outline+'</outline>\n  <plot>'+nfo_plot+'</plot>\n  <runtime>'+nfo_runtime+'</runtime>\n  <director>'+nfo_director+'</director>\n  <poster>'+nfo_poster+'</poster>\n  <thumb>'+nfo_thumb+'</thumb>\n  <fanart>'+nfo_fanart+'</fanart>'
 			text_middle = "  <maker>"+nfo_maker+"</maker>\n  <label>\n  </label>"
 			text_down = "  <num>"+nfo_num+"</num>\n  <release>"+nfo_release+"</release>\n  <premiered>"+nfo_premiered+"</premiered>\n  <cover>"+nfo_cover+"</cover>\n  <website>"+nfo_website+"</website>\n</movie>"
 			#寫入.nfo & images
@@ -143,7 +143,7 @@ def WriteNfo(file_name, video_id, text_up, text_middle, text_down, nfo_name, nfo
 			print("  <actor>", file=code)
 			if type(nfo_name) == list:
 				for nfo_name_fetch in nfo_name:
-					print("   </name>"+nfo_name_fetch+"</name>", file=code)
+					print("   <name>"+nfo_name_fetch+"</name>", file=code)
 			else: print("   <name>"+nfo_name+"</name>", file=code)
 			print("  </actor>", file=code)
 			print(text_middle, file=code)

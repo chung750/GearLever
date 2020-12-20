@@ -206,7 +206,7 @@ def start(thread_num, path, path_drive):
 		joinThreading(thread_num, threads)
 		print("[Info] 下載完成!")
 		timeelapsed = time.time() - starttime #總共下載時間
-		print('[Info] 共花費'+str(time.strftime('%M分%S秒', time.localtime(timeelapsed))))
+		print('[Info] 共花費'+str(time.strftime('%H時%M分%S秒', time.localtime(timeelapsed))))
 		if restart(thread_num, path, path_drive):
 			return True
 	except Exception as e:
@@ -234,8 +234,8 @@ def restart(thread_num, path, path_drive):
 			joinThreading(thread_num, threads)
 			print("[Info] 補下載完成!")
 			timeelapsed = time.time() - starttime #總共下載時間
-			print('[Info] 共花費'+str(time.strftime('%M分%S秒', time.localtime(timeelapsed))))
-			restart(thread_num, path, path_drive)
+			print('[Info] 共花費'+str(time.strftime('%H時%M分%S秒', time.localtime(timeelapsed))))
+			if restart(thread_num, path, path_drive): return True
 		except Exception as e:
 			print(e)
 			print("[Error] 補下載失敗!")

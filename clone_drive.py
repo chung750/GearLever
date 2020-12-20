@@ -17,7 +17,7 @@ def convert_size(size_bytes):
 #檢查是否轉存成功
 def search_drive(file_name, video_id, file_path):
 	drive_dir = os.listdir(file_path)
-	check = [False, False, False, False, False, ]
+	check = [False, False, False, False, False ]
 	#確認是否存在資料夾
 	file_name = [i for i in drive_dir if video_id.upper() in i][0]
 	if file_name:
