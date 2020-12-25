@@ -247,7 +247,7 @@ def restart(thread_num, path, path_drive):
 			output_path = nf.start(file_name, video_id)
 			if output_path:
 				#影片壓制
-				if suppress_video.start(file_name, video_id, path, output_path):
+				if suppress_video.start(path, output_path):
 					#轉存雲端
 					if clone_drive.start(file_name, video_id, path_drive):
 						return True

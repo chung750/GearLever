@@ -18,7 +18,7 @@ url_inits = "" #: 開頭檔的url
 
 def doParser(url):
 	try:
-		video_id = url.split('/')[-2]
+		
 		#透過beautiful soup進行網頁資訊爬蟲
 		soup_jable = BeautifulSoup(requests.get(url).text, features="html.parser") #抓取整個html原始碼
 		#抓.m3u8 url
@@ -26,6 +26,7 @@ def doParser(url):
 		poster_src = [i.get("href") for i in soup_jable.select(poster_selector)][0]
 		url_m3u8 = poster_src
 		file_name = soup_jable.find("meta",  property="og:title")["content"]
+		video_id = file_name.split(' ')[0]
 		if (len(file_name) > 70) : file_name = file_name[:-(len(file_name)-70)] #避免檔名過長
 		#url轉換
 		ts_id = url_m3u8[:-5].split('/')[-1]

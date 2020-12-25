@@ -2,7 +2,7 @@ from GearLever import gl_variable as gl
 import subprocess
 import shlex
 #壓制
-def start(file_name, ts_id, input_path, output_path):
+def start(input_path, output_path):
 	try:
 		file_name = gl.get_value('file_name')
 		ts_id = gl.get_value('ts_id')
