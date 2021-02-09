@@ -14,12 +14,12 @@ def NfoProcedure(file_name, video_id):
 		jable_url = 'https://jable.tv/videos/'+ video_id+'/'
 		soup_javbus = BeautifulSoup(requests.get(javbus_url).text,features="html.parser") #抓取整個html原始碼
 		soup_jable = BeautifulSoup(requests.get(jable_url).text,features="html.parser") #抓取整個html原始碼
-	print("hi")
-	if not soup_jable.find("meta", property="og:title"):
-		print("hi2")
-		jable_url = 'https://jable.tv/videos/'+ video_id +'-c/'
-		soup_jable = BeautifulSoup(requests.get(jable_url).text,features="html.parser")
-    try:
+		print("hi")
+		if not soup_jable.find("meta", property="og:title"):
+			print("hi2")
+			jable_url = 'https://jable.tv/videos/'+ video_id +'-c/'
+			soup_jable = BeautifulSoup(requests.get(jable_url).text,features="html.parser")
+		try:
 			info_selector = "div.container div.info p" #塞選器
 			dict_info = {} #影片資訊
 			list_string = []
