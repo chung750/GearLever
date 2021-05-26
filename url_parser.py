@@ -23,7 +23,7 @@ def doParser(url):
 		soup_jable = BeautifulSoup(requests.get(url).text, features="html.parser") #抓取整個html原始碼
 		#抓.m3u8 url
 		poster_selector = "section.pb-e-lg-30 link" #塞選器
-		poster_src = [i.get("href") for i in soup_jable.select(poster_selector)][0]
+		poster_src = soup_jable.select(poster_selector)[1].text.split("'")[1]
 		url_m3u8 = poster_src
 		file_name = soup_jable.find("meta",  property="og:title")["content"]
 		video_id = file_name.split(' ')[0]
