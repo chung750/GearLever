@@ -118,7 +118,7 @@ def NfoProcedure(file_name, video_id):
 				print('[Error] cannot get: nfo_premiered')
 				nfo_premiered = ''
 			try:
-				nfo_cover = "javbus.com" + soup_javbus.select("div.container div.screencap a")[0].get("href")
+				nfo_cover = "https://javbus.com" + soup_javbus.select("div.container div.screencap a")[0].get("href")
 			except:
 				print('[Error] cannot get: nfo_cover')
 				nfo_cover = ''
